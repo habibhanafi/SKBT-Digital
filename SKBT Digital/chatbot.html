@@ -1,1063 +1,1184 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Asisten SKBT Digital</title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #eef3f8;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #123;
+    }
+
+    .chat-container {
+      width: 100%;
+      max-width: 900px;
+      height: 85vh;
+      min-height: 600px;
+      margin: auto;
+      background: white;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 10px 35px rgba(0,0,0,0.12);
+
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* =========================
+       HEADER
+    ========================= */
+
+    .chat-header {
+      background: linear-gradient(
+        135deg,
+        #1769c2,
+        #14589f
+      );
+
+      color: white;
+      padding: 20px 24px;
+      flex-shrink: 0;
+    }
+
+    .chat-header h2 {
+      margin: 0 0 5px 0;
+      font-size: 26px;
+    }
+
+    .chat-header p {
+      margin: 0;
+      font-size: 14px;
+      opacity: 0.95;
+    }
+
+    /* =========================
+       CHAT AREA
+    ========================= */
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+
+      background:
+        linear-gradient(
+          rgba(255,255,255,0.96),
+          rgba(255,255,255,0.96)
+        );
+
+      scroll-behavior: smooth;
+    }
+
+    .message-row {
+      display: flex;
+      margin-bottom: 14px;
+    }
+
+    .message-row.user {
+      justify-content: flex-end;
+    }
+
+    .message-row.bot {
+      justify-content: flex-start;
+    }
+
+    .message {
+      max-width: 78%;
+      padding: 13px 16px;
+      border-radius: 14px;
+      line-height: 1.55;
+      font-size: 15px;
+      word-wrap: break-word;
+      white-space: normal;
+    }
+
+    .message.bot {
+      background: #e8f1fb;
+      color: #17395f;
+      border-top-left-radius: 5px;
+    }
 
-<meta charset="UTF-8">
+    .message.user {
+      background: #1769c2;
+      color: white;
+      border-top-right-radius: 5px;
+    }
 
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0"
->
+    .message p {
+      margin: 0 0 10px 0;
+    }
 
-<title>
-  Asisten SKBT Digital
-</title>
+    .message p:last-child {
+      margin-bottom: 0;
+    }
 
+    .message ul,
+    .message ol {
+      margin-top: 8px;
+      margin-bottom: 8px;
+      padding-left: 22px;
+    }
 
-<style>
+    .message li {
+      margin-bottom: 5px;
+    }
 
-* {
-  box-sizing: border-box;
-}
+    .message a {
+      color: inherit;
+      font-weight: bold;
+    }
 
+    .message.bot a {
+      color: #125db1;
+    }
 
-body {
+    /* =========================
+       FORM BUTTON
+    ========================= */
 
-  margin: 0;
+    .form-button {
+      display: inline-block;
 
-  font-family:
-    Arial,
-    Helvetica,
-    sans-serif;
+      margin-top: 10px;
+      padding: 10px 14px;
 
-  background:
-    #f5f7fb;
+      background: #2867df;
+      color: white;
 
-  color:
-    #1f2937;
+      border-radius: 7px;
 
-}
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: bold;
 
+      cursor: pointer;
+      border: none;
+    }
 
-/* =====================================================
-   CONTAINER
-   ===================================================== */
+    .form-button:hover {
+      background: #1d55bd;
+    }
 
-.chatbot-container {
+    /* =========================
+       QUICK BUTTON AREA
+    ========================= */
 
-  width:
-    100%;
+    .quick-area {
+      flex-shrink: 0;
+      background: white;
 
-  max-width:
-    760px;
+      border-top: 1px solid #dce5ef;
 
-  margin:
-    20px auto;
+      padding: 10px 14px 8px;
+    }
 
-  background:
-    #ffffff;
+    .quick-title {
+      color: #607894;
+      font-size: 14px;
+      margin-bottom: 7px;
+    }
 
-  border-radius:
-    18px;
+    .quick-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
 
-  box-shadow:
-    0 8px 30px
-    rgba(0,0,0,0.08);
+    .quick-button {
+      background: white;
+      color: #1259a8;
 
-  overflow:
-    hidden;
+      border: 1px solid #b8cee7;
 
-}
+      border-radius: 20px;
 
+      padding: 8px 13px;
 
-/* =====================================================
-   HEADER
-   ===================================================== */
+      font-size: 14px;
 
-.chatbot-header {
+      cursor: pointer;
+    }
 
-  padding:
-    22px;
+    .quick-button:hover {
+      background: #edf5ff;
+    }
 
-  background:
-    #ffffff;
+    /* =========================
+       INPUT AREA
+    ========================= */
 
-  border-bottom:
-    1px solid #e5e7eb;
+    .input-area {
+      flex-shrink: 0;
 
-}
+      display: flex;
+      gap: 8px;
 
+      padding: 10px 14px 14px;
 
-.chatbot-header h2 {
+      background: white;
+    }
 
-  margin:
-    0 0 8px 0;
+    #messageInput {
+      flex: 1;
 
-  font-size:
-    22px;
+      border: 1px solid #a9c3df;
 
-}
+      border-radius: 12px;
 
+      padding: 12px 14px;
 
-.chatbot-header p {
+      font-size: 15px;
 
-  margin:
-    0;
+      outline: none;
+    }
 
-  color:
-    #6b7280;
+    #messageInput:focus {
+      border-color: #1769c2;
 
-}
+      box-shadow:
+        0 0 0 2px rgba(23,105,194,0.12);
+    }
 
+    #sendButton {
+      border: none;
 
-/* =====================================================
-   CHAT AREA
-   ===================================================== */
+      background: #1769c2;
+      color: white;
 
-.chat-area {
+      padding: 0 22px;
 
-  padding:
-    20px;
+      border-radius: 12px;
 
-  min-height:
-    400px;
+      font-size: 15px;
+      font-weight: bold;
 
-  max-height:
-    560px;
+      cursor: pointer;
+    }
 
-  overflow-y:
-    auto;
+    #sendButton:hover {
+      background: #125aa8;
+    }
 
-}
+    #sendButton:disabled {
+      background: #8baed3;
+      cursor: not-allowed;
+    }
 
+    /* =========================
+       LOADING
+    ========================= */
 
-.message {
+    .typing {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
 
-  margin-bottom:
-    15px;
+    .typing span {
+      width: 7px;
+      height: 7px;
 
-  display:
-    flex;
+      background: #6d88a4;
 
-}
+      border-radius: 50%;
 
+      animation: typing 1.2s infinite;
+    }
 
-.message.user {
+    .typing span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
 
-  justify-content:
-    flex-end;
+    .typing span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
 
-}
+    @keyframes typing {
 
+      0%,
+      60%,
+      100% {
+        opacity: 0.25;
+        transform: translateY(0);
+      }
 
-.message.assistant {
+      30% {
+        opacity: 1;
+        transform: translateY(-3px);
+      }
 
-  justify-content:
-    flex-start;
+    }
 
-}
+    /* =========================
+       MOBILE
+    ========================= */
 
+    @media (max-width: 600px) {
 
-.message-bubble {
+      body {
+        padding: 0;
+      }
 
-  max-width:
-    82%;
+      .chat-container {
+        height: 100vh;
+        min-height: 100vh;
+        border-radius: 0;
+      }
 
-  padding:
-    12px 15px;
+      .chat-header h2 {
+        font-size: 21px;
+      }
 
-  border-radius:
-    14px;
+      .message {
+        max-width: 88%;
+        font-size: 14px;
+      }
 
-  line-height:
-    1.55;
+      .quick-buttons {
+        gap: 6px;
+      }
 
-  white-space:
-    pre-wrap;
+      .quick-button {
+        font-size: 13px;
+        padding: 7px 10px;
+      }
 
-}
+      #sendButton {
+        padding: 0 16px;
+      }
+    }
 
-
-.message.user
-.message-bubble {
-
-  background:
-    #2563eb;
-
-  color:
-    #ffffff;
-
-  border-bottom-right-radius:
-    4px;
-
-}
-
-
-.message.assistant
-.message-bubble {
-
-  background:
-    #f1f5f9;
-
-  color:
-    #1f2937;
-
-  border-bottom-left-radius:
-    4px;
-
-}
-
-
-/* =====================================================
-   QUICK BUTTONS
-   ===================================================== */
-
-.quick-title {
-
-  padding:
-    0 20px 10px;
-
-  font-weight:
-    600;
-
-}
-
-
-.quick-buttons {
-
-  display:
-    flex;
-
-  flex-wrap:
-    wrap;
-
-  gap:
-    10px;
-
-  padding:
-    0 20px 20px;
-
-}
-
-
-.quick-button {
-
-  border:
-    1px solid #dbe3ef;
-
-  background:
-    #ffffff;
-
-  padding:
-    10px 14px;
-
-  border-radius:
-    10px;
-
-  cursor:
-    pointer;
-
-  font-size:
-    14px;
-
-}
-
-
-.quick-button:hover {
-
-  background:
-    #f8fafc;
-
-}
-
-
-/* =====================================================
-   INPUT
-   ===================================================== */
-
-.input-area {
-
-  display:
-    flex;
-
-  gap:
-    10px;
-
-  padding:
-    18px;
-
-  border-top:
-    1px solid #e5e7eb;
-
-}
-
-
-#messageInput {
-
-  flex:
-    1;
-
-  padding:
-    13px 14px;
-
-  border:
-    1px solid #d1d5db;
-
-  border-radius:
-    10px;
-
-  outline:
-    none;
-
-  font-size:
-    15px;
-
-}
-
-
-#messageInput:focus {
-
-  border-color:
-    #2563eb;
-
-}
-
-
-#sendButton {
-
-  border:
-    none;
-
-  background:
-    #2563eb;
-
-  color:
-    white;
-
-  padding:
-    0 20px;
-
-  border-radius:
-    10px;
-
-  cursor:
-    pointer;
-
-  font-weight:
-    600;
-
-}
-
-
-#sendButton:disabled {
-
-  opacity:
-    0.6;
-
-  cursor:
-    not-allowed;
-
-}
-
-
-/* =====================================================
-   LINK ACTION
-   ===================================================== */
-
-.action-button {
-
-  display:
-    inline-block;
-
-  margin-top:
-    10px;
-
-  padding:
-    9px 13px;
-
-  background:
-    #2563eb;
-
-  color:
-    #ffffff;
-
-  text-decoration:
-    none;
-
-  border-radius:
-    8px;
-
-  font-size:
-    14px;
-
-}
-
-
-</style>
-
+  </style>
 </head>
-
 
 <body>
 
+  <div class="chat-container">
 
-<div class="chatbot-container">
+    <!-- =========================
+         HEADER
+    ========================== -->
+
+    <div class="chat-header">
+
+      <h2>
+        🤖 Asisten SKBT Digital
+      </h2>
+
+      <p>
+        Layanan interaktif Surat Keterangan Bebas Temuan
+      </p>
+
+    </div>
 
 
-  <div class="chatbot-header">
+    <!-- =========================
+         CHAT
+    ========================== -->
 
-    <h2>
-      🤖 Asisten SKBT Digital
-    </h2>
+    <div
+      id="chatMessages"
+      class="chat-messages"
+    >
 
-    <p>
-      Layanan interaktif Surat Keterangan Bebas Temuan
-    </p>
+      <div class="message-row bot">
 
-  </div>
+        <div class="message bot">
 
+          <p>
+            Halo 😊 Saya <b>Asisten SKBT Digital</b>.
+          </p>
 
-  <div
-    id="chatArea"
-    class="chat-area"
-  >
+          <p>
+            Saya dapat membantu Anda memahami
+            Surat Keterangan Bebas Temuan,
+            persyaratan, dokumen, prosedur,
+            serta mengarahkan Anda saat mengisi
+            formulir pengajuan SKBT.
+          </p>
 
-    <div class="message assistant">
+          <p>
+            Anda juga dapat bertanya mengenai
+            kondisi atau kendala tertentu terkait
+            pengajuan SKBT.
+          </p>
 
-      <div class="message-bubble">
-
-        Halo 👋 Saya Asisten SKBT Digital.
-
-        <br><br>
-
-        Saya dapat membantu Anda memahami
-        persyaratan, dokumen, prosedur, biaya,
-        waktu penyelesaian, serta mengarahkan
-        Anda ke formulir permohonan SKBT.
+        </div>
 
       </div>
+
+    </div>
+
+
+    <!-- =========================
+         QUICK BUTTONS
+    ========================== -->
+
+    <div class="quick-area">
+
+      <div class="quick-title">
+        Asisten siap membantu:
+      </div>
+
+      <div class="quick-buttons">
+
+        <button
+          type="button"
+          class="quick-button"
+          data-message="Saya ingin mengajukan SKBT"
+        >
+          📝 Ajukan SKBT
+        </button>
+
+
+        <button
+          type="button"
+          class="quick-button"
+          data-message="Apa saja persyaratan SKBT?"
+        >
+          📋 Persyaratan
+        </button>
+
+
+        <button
+          type="button"
+          class="quick-button"
+          data-message="Bagaimana cara pengajuan SKBT?"
+        >
+          ℹ️ Cara Pengajuan
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- =========================
+         INPUT
+    ========================== -->
+
+    <div class="input-area">
+
+      <input
+        id="messageInput"
+        type="text"
+        placeholder="Ketik pesan Anda..."
+        autocomplete="off"
+      >
+
+      <button
+        id="sendButton"
+        type="button"
+      >
+        Kirim
+      </button>
 
     </div>
 
   </div>
 
 
-  <div class="quick-title">
-
-    Asisten siap membantu:
-
-  </div>
-
-
-  <div class="quick-buttons">
-
-
-    <button
-      type="button"
-      class="quick-button"
-      data-message="Saya ingin mengajukan SKBT"
-    >
-
-      📝 Ajukan SKBT
-
-    </button>
-
-
-    <button
-      type="button"
-      class="quick-button"
-      data-message="Apa saja persyaratan SKBT?"
-    >
-
-      📋 Persyaratan
-
-    </button>
-
-
-    <button
-      type="button"
-      class="quick-button"
-      data-message="Bagaimana cara pengajuan SKBT?"
-    >
-
-      ℹ️ Cara Pengajuan
-
-    </button>
-
-
-  </div>
-
-
-  <div class="input-area">
-
-
-    <input
-      id="messageInput"
-      type="text"
-      placeholder="Ketik pesan Anda..."
-      autocomplete="off"
-    >
-
-
-    <button
-      id="sendButton"
-      type="button"
-    >
-
-      Kirim
-
-    </button>
-
-
-  </div>
-
-
-</div>
-
-
 <script>
 
-/* =====================================================
+/* ============================================================
    KONFIGURASI
-   ===================================================== */
-
+============================================================ */
 
 /*
- * GANTI DENGAN URL WEB APP APPS SCRIPT CHATBOT
- *
- * BUKAN URL APPS SCRIPT SKBT UTAMA.
- */
+   GANTI URL DI BAWAH DENGAN URL WEB APP GOOGLE APPS SCRIPT
+   YANG ANDA GUNAKAN UNTUK ASISTEN SKBT.
 
-const CHATBOT_API_URL =
+   Contoh:
+
+   https://script.google.com/macros/s/XXXXXXXXXXXX/exec
+
+   Jika ketika URL dibuka muncul:
+
+   "Layanan Asisten SKBT aktif"
+
+   berarti URL tersebut adalah URL yang benar.
+*/
+
+const API_URL =
   "https://script.google.com/macros/s/AKfycbwB2-PDQMBuOiCiyBdzsqAh3mfYH-Nkt-HhjiujG-TizDKECLDg6j7sqoBufMSE2uGbZQ/exec";
-  
 
 
 /*
- * URL FORM UTAMA
- */
+   URL FORMULIR UTAMA SKBT
+
+   Ini hanya digunakan sebagai tombol pengarah.
+*/
 
 const FORM_URL =
   "https://inspektorat.acehtimurkab.go.id/halaman/permohonan-surat-bebas-temuan";
 
 
-/* =====================================================
-   ELEMENT
-   ===================================================== */
+/* ============================================================
+   ELEMEN
+============================================================ */
 
-const chatArea =
-  document.getElementById(
-    "chatArea"
-  );
-
+const chatMessages =
+  document.getElementById("chatMessages");
 
 const messageInput =
-  document.getElementById(
-    "messageInput"
-  );
-
+  document.getElementById("messageInput");
 
 const sendButton =
-  document.getElementById(
-    "sendButton"
-  );
+  document.getElementById("sendButton");
 
 
-/* =====================================================
-   HISTORY
-   ===================================================== */
+/* ============================================================
+   RIWAYAT PERCAKAPAN
+============================================================ */
+
+/*
+   Kita simpan beberapa percakapan terakhir.
+
+   Tujuannya agar:
+
+   User:
+   "Saya mau pensiun."
+
+   Bot:
+   menjelaskan pensiun.
+
+   User:
+   "SK terakhir saya tidak ada."
+
+   Bot memahami bahwa "SK terakhir"
+   berkaitan dengan permohonan pensiun,
+   bukan menganggap pertanyaan baru.
+*/
 
 let conversationHistory = [];
 
 
-/* =====================================================
-   TAMBAH PESAN
-   ===================================================== */
+/* ============================================================
+   FUNGSI TAMBAH PESAN
+============================================================ */
 
 function addMessage(
-  role,
-  text
+  text,
+  sender = "bot"
 ) {
 
-  const message =
-    document.createElement(
-      "div"
-    );
+  const row =
+    document.createElement("div");
 
+  row.className =
+    "message-row " + sender;
+
+
+  const message =
+    document.createElement("div");
 
   message.className =
-    "message " +
-    role;
-
-
-  const bubble =
-    document.createElement(
-      "div"
-    );
-
-
-  bubble.className =
-    "message-bubble";
+    "message " + sender;
 
 
   /*
-   * Ubah markdown sederhana
-   */
+     Karena jawaban AI bisa memiliki:
 
-  bubble.innerHTML =
-    formatText(
-      text
-    );
+     **
+     bullet
+     nomor
+     link
 
+     kita ubah format sederhana
+     menjadi HTML yang aman.
+  */
 
-  message.appendChild(
-    bubble
-  );
-
-
-  chatArea.appendChild(
-    message
-  );
+  message.innerHTML =
+    formatBotText(text);
 
 
-  chatArea.scrollTop =
-    chatArea.scrollHeight;
+  row.appendChild(message);
 
+  chatMessages.appendChild(row);
+
+
+  scrollChat();
+
+
+  return row;
 }
 
 
-/* =====================================================
-   FORMAT TEXT
-   ===================================================== */
+/* ============================================================
+   FORMAT TEXT BOT
+============================================================ */
 
-function formatText(
-  text
-) {
+function formatBotText(text) {
 
-  let html =
-    String(
-      text || ""
+  if (!text) {
+    return "";
+  }
+
+
+  /*
+     Escape HTML terlebih dahulu
+     agar AI tidak bisa memasukkan
+     script sembarangan.
+  */
+
+  let safe =
+    String(text)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+
+
+  /*
+     Link formulir
+  */
+
+  safe =
+    safe.replace(
+      /\[FORMULIR_SKBT\]/g,
+      `
+      <a
+        href="${FORM_URL}"
+        target="_blank"
+        class="form-button"
+      >
+        📝 Buka Formulir SKBT
+      </a>
+      `
     );
 
 
   /*
-   * Escape HTML
-   */
+     Bold sederhana:
+     **teks**
+  */
 
-  html =
-    html
-      .replace(
-        /&/g,
-        "&amp;"
-      )
-      .replace(
-        /</g,
-        "&lt;"
-      )
-      .replace(
-        />/g,
-        "&gt;"
-      );
-
-
-  /*
-   * Bold
-   */
-
-  html =
-    html.replace(
+  safe =
+    safe.replace(
       /\*\*(.*?)\*\*/g,
       "<strong>$1</strong>"
     );
 
 
   /*
-   * Link formulir
-   */
+     Baris baru
+  */
 
-  if (
-    html.includes(
-      "Ajukan SKBT"
-    )
-  ) {
-
-    html +=
-
-      '<br><a class="action-button" ' +
-
-      'href="' +
-
-      FORM_URL +
-
-      '" target="_blank">' +
-
-      '📝 Buka Formulir SKBT' +
-
-      '</a>';
-
-  }
+  safe =
+    safe.replace(
+      /\n/g,
+      "<br>"
+    );
 
 
-  return html;
+  return safe;
+}
+
+
+/* ============================================================
+   SCROLL CHAT
+============================================================ */
+
+function scrollChat() {
+
+  setTimeout(() => {
+
+    chatMessages.scrollTop =
+      chatMessages.scrollHeight;
+
+  }, 50);
 
 }
 
 
-/* =====================================================
-   KIRIM PESAN
-   ===================================================== */
+/* ============================================================
+   TYPING INDICATOR
+============================================================ */
 
-async function sendMessage(
-  customMessage = null
-) {
+function showTyping() {
+
+  const row =
+    document.createElement("div");
+
+  row.className =
+    "message-row bot";
+
+
+  row.id =
+    "typingIndicator";
+
 
   const message =
-    customMessage !== null
-      ? customMessage
-      : messageInput.value.trim();
+    document.createElement("div");
+
+  message.className =
+    "message bot";
 
 
-  if (!message) {
+  message.innerHTML = `
+    <div class="typing">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  `;
 
-    return;
+
+  row.appendChild(message);
+
+  chatMessages.appendChild(row);
+
+  scrollChat();
+
+}
+
+
+function removeTyping() {
+
+  const typing =
+    document.getElementById(
+      "typingIndicator"
+    );
+
+  if (typing) {
+    typing.remove();
+  }
+
+}
+
+
+/* ============================================================
+   PESAN ERROR
+============================================================ */
+
+function showConnectionError() {
+
+  addMessage(
+`
+⚠️ Maaf, Asisten SKBT sedang mengalami gangguan koneksi.
+
+Namun Anda tetap dapat mengakses formulir resmi SKBT.
+
+[FORMULIR_SKBT]
+`,
+    "bot"
+  );
+
+}
+
+
+/* ============================================================
+   BATAS RIWAYAT
+============================================================ */
+
+function getRecentHistory() {
+
+  /*
+     Hanya kirim 12 pesan terakhir
+     agar request tidak terlalu besar.
+  */
+
+  return conversationHistory
+    .slice(-12);
+
+}
+
+
+/* ============================================================
+   KIRIM PESAN KE BACKEND
+============================================================ */
+
+async function sendToAssistant(
+  userMessage
+) {
+
+  /*
+     Pastikan URL sudah diganti.
+  */
+
+  if (
+    !API_URL ||
+    API_URL.includes(
+      "GANTI_DENGAN_URL"
+    )
+  ) {
+
+    throw new Error(
+      "URL Web App Asisten SKBT belum diisi."
+    );
 
   }
 
 
   /*
-   * Tampilkan pesan user
-   */
+     Data yang dikirim ke Apps Script.
+
+     message:
+     pertanyaan terbaru.
+
+     history:
+     percakapan sebelumnya.
+
+     Ini yang membuat AI dapat memahami konteks.
+  */
+
+  const payload = {
+
+    message: userMessage,
+
+    history:
+      getRecentHistory()
+
+  };
+
+
+  /*
+     Request utama.
+
+     Backend Apps Script harus menerima
+     JSON POST.
+  */
+
+  const response =
+    await fetch(
+      API_URL,
+      {
+
+        method: "POST",
+
+        headers: {
+          "Content-Type":
+            "text/plain;charset=utf-8"
+        },
+
+        body:
+          JSON.stringify(payload)
+
+      }
+    );
+
+
+  if (!response.ok) {
+
+    throw new Error(
+      "HTTP " +
+      response.status
+    );
+
+  }
+
+
+  const text =
+    await response.text();
+
+
+  let data;
+
+  try {
+
+    data =
+      JSON.parse(text);
+
+  } catch (error) {
+
+    /*
+       Jika backend mengembalikan
+       text biasa.
+    */
+
+    return text;
+
+  }
+
+
+  /*
+     Mendukung beberapa nama
+     field response.
+
+     Jadi backend bisa menggunakan:
+
+     reply
+     response
+     message
+     answer
+  */
+
+  const answer =
+    data.reply ||
+    data.response ||
+    data.message ||
+    data.answer;
+
+
+  if (!answer) {
+
+    throw new Error(
+      "Respons AI tidak memiliki jawaban."
+    );
+
+  }
+
+
+  return answer;
+
+}
+
+
+/* ============================================================
+   KIRIM PESAN
+============================================================ */
+
+async function handleSend() {
+
+  const text =
+    messageInput.value.trim();
+
+
+  if (!text) {
+    return;
+  }
+
+
+  /*
+     Tampilkan pesan user.
+  */
 
   addMessage(
-    "user",
-    message
+    text,
+    "user"
   );
 
 
   /*
-   * Bersihkan input
-   */
+     Simpan ke history.
+  */
 
-  messageInput.value =
-    "";
+  conversationHistory.push({
 
+    role: "user",
 
-  /*
-   * Disable tombol
-   */
+    content: text
 
-  sendButton.disabled =
-    true;
+  });
 
 
   /*
-   * Loading
-   */
+     Kosongkan input.
+  */
 
-  addMessage(
-    "assistant",
-    "⏳ Saya sedang memahami pertanyaan Anda..."
-  );
+  messageInput.value = "";
 
 
-  const loadingMessage =
-    chatArea.lastElementChild;
+  /*
+     Nonaktifkan tombol
+     selama proses.
+  */
+
+  sendButton.disabled = true;
+
+  messageInput.disabled = true;
+
+
+  showTyping();
 
 
   try {
 
-    /*
-     * FETCH KE APPS SCRIPT
-     */
-
-    const response =
-      await fetch(
-
-        CHATBOT_API_URL,
-
-        {
-
-          method:
-            "POST",
-
-          headers: {
-
-            "Content-Type":
-              "application/json"
-
-          },
-
-          body:
-            JSON.stringify({
-
-              message:
-                message,
-
-              history:
-                conversationHistory
-
-            })
-
-        }
-
+    const answer =
+      await sendToAssistant(
+        text
       );
 
 
-    /*
-     * HTTP ERROR
-     */
+    removeTyping();
 
-    if (
-      !response.ok
-    ) {
-
-      throw new Error(
-        "HTTP " +
-        response.status
-      );
-
-    }
-
-
-    /*
-     * JSON
-     */
-
-    const data =
-      await response.json();
-
-
-    /*
-     * Hapus loading
-     */
-
-    if (
-      loadingMessage
-    ) {
-
-      loadingMessage.remove();
-
-    }
-
-
-    /*
-     * ERROR DARI SERVER
-     */
-
-    if (
-      !data.success
-    ) {
-
-      throw new Error(
-        data.message ||
-        "Server chatbot gagal."
-      );
-
-    }
-
-
-    const reply =
-      data.reply ||
-      "Maaf, saya belum dapat memberikan jawaban.";
-
-
-    /*
-     * Tampilkan jawaban
-     */
 
     addMessage(
-      "assistant",
-      reply
+      answer,
+      "bot"
     );
 
 
     /*
-     * Simpan conversation
-     */
+       Simpan jawaban AI.
+    */
 
     conversationHistory.push({
 
-      role:
-        "user",
+      role: "assistant",
 
-      content:
-        message
+      content: answer
 
     });
 
 
-    conversationHistory.push({
-
-      role:
-        "assistant",
-
-      content:
-        reply
-
-    });
-
-
-    /*
-     * Batasi history
-     *
-     * Agar token tidak terlalu besar.
-     */
-
-    if (
-      conversationHistory.length > 10
-    ) {
-
-      conversationHistory =
-        conversationHistory.slice(
-          -10
-        );
-
-    }
-
-
-    /*
-     * Jika chatbot memberi action FORM
-     */
-
-    if (
-      data.action ===
-      "FORM"
-    ) {
-
-      /*
-       * Tidak perlu membuka otomatis.
-       * User tetap melihat tombol.
-       */
-
-    }
-
-  }
-
-  catch (error) {
+  } catch (error) {
 
     console.error(
+      "Asisten SKBT:",
       error
     );
 
 
+    removeTyping();
+
+
     /*
-     * Hapus loading
-     */
+       Jika terjadi error,
+       jangan menampilkan error
+       teknis yang membingungkan user.
+    */
+
+    let errorText =
+`
+⚠️ Maaf, Asisten SKBT belum dapat menjawab saat ini.
+
+Silakan coba kembali beberapa saat lagi.
+
+Jika Anda ingin langsung melakukan pengajuan, gunakan formulir resmi berikut:
+
+[FORMULIR_SKBT]
+`;
+
+
+    /*
+       Jika error karena URL belum diisi,
+       berikan informasi khusus.
+    */
 
     if (
-      loadingMessage
+      error.message &&
+      error.message.includes(
+        "URL Web App"
+      )
     ) {
 
-      loadingMessage.remove();
+      errorText =
+`
+⚠️ Konfigurasi Asisten SKBT belum lengkap.
+
+URL Web App Google Apps Script belum dimasukkan ke dalam chatbot.html.
+
+Silakan isi variabel API_URL pada source code.
+`;
 
     }
 
 
     addMessage(
-
-      "assistant",
-
-      "⚠️ Maaf, Asisten SKBT sedang mengalami " +
-      "gangguan koneksi. Namun Anda tetap dapat " +
-      "mengakses formulir resmi SKBT melalui " +
-      "tombol **Ajukan SKBT**."
-
+      errorText,
+      "bot"
     );
 
   }
 
-  finally {
 
-    sendButton.disabled =
-      false;
+  sendButton.disabled = false;
 
-    messageInput.focus();
+  messageInput.disabled = false;
 
-  }
+  messageInput.focus();
 
 }
 
 
-/* =====================================================
+/* ============================================================
    TOMBOL KIRIM
-   ===================================================== */
+============================================================ */
 
 sendButton.addEventListener(
-
   "click",
-
-  function() {
-
-    sendMessage();
-
-  }
-
+  handleSend
 );
 
 
-/* =====================================================
-   ENTER
-   ===================================================== */
+/* ============================================================
+   ENTER UNTUK KIRIM
+============================================================ */
 
 messageInput.addEventListener(
-
   "keydown",
-
   function(event) {
 
     if (
-      event.key ===
-      "Enter"
+      event.key === "Enter" &&
+      !event.shiftKey
     ) {
 
       event.preventDefault();
 
-      sendMessage();
+      handleSend();
 
     }
 
   }
-
 );
 
 
-/* =====================================================
+/* ============================================================
    QUICK BUTTON
-   ===================================================== */
+============================================================ */
 
 document
   .querySelectorAll(
     ".quick-button"
   )
   .forEach(
-
     function(button) {
 
       button.addEventListener(
-
         "click",
-
         function() {
 
           const message =
             button.dataset.message;
 
-          sendMessage(
-            message
-          );
+
+          if (!message) {
+            return;
+          }
+
+
+          /*
+             Masukkan ke input
+             kemudian kirim otomatis.
+          */
+
+          messageInput.value =
+            message;
+
+
+          handleSend();
 
         }
-
       );
 
     }
-
   );
+
+
+/* ============================================================
+   FOKUS INPUT
+============================================================ */
+
+messageInput.focus();
+
 
 </script>
 
-
 </body>
-
 </html>
