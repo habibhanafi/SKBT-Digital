@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Permohonan SKBT Online</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<main class="container">
+  <div class="progress">
+    <div class="p active" id="p1"><b>1</b><span>Data Pemohon</span></div>
+    <i id="l1"></i>
+    <div class="p" id="p2"><b>2</b><span>Dokumen</span></div>
+    <i id="l2"></i>
+    <div class="p" id="p3"><b>3</b><span>Review</span></div>
+  </div>
+
+  <form id="form">
+
+    <!-- STEP 1 -->
+    <section class="step active" id="s1">
+      <div class="card">
+        <div class="title">
+          <small>STEP 1</small>
+          <h2>Data Pemohon</h2>
+          <p>Lengkapi data sesuai dokumen resmi.</p>
+        </div>
+
+        <div class="grid">
+          <label class="full">Keperluan*
+            <select id="keperluan" required>
+              <option value="">Pilih keperluan</option>
+              <option>Kenaikan Pangkat</option>
+              <option>Pensiun</option>
+              <option>Pemberhentian Karena Meninggal Dunia</option>
+              <option>Pemberhentian</option>
+              <option>Pengangkatan Dalam Jabatan</option>
+              <option>Keperluan Lainnya</option>
+            </select>
+          </label>
+
+          <label>Nama Sesuai SK*
+            <input id="nama" required>
+          </label>
+
+          <label>NIP*
+            <input id="nip" maxlength="18" inputmode="numeric" required>
+          </label>
+
+          <label>Pangkat/Golongan*
+            <select id="pangkat" required>
+              <option value="">Pilih</option>
+              <option>Juru Muda / I.a</option>
+              <option>Juru Muda Tingkat I / I.b</option>
+              <option>Juru / I.c</option>
+              <option>Juru Tingkat I / I.d</option>
+              <option>Pengatur Muda / II.a</option>
+              <option>Pengatur Muda Tingkat I / II.b</option>
+              <option>Pengatur / II.c</option>
+              <option>Pengatur Tingkat I / II.d</option>
+              <option>Penata Muda / III.a</option>
+              <option>Penata Muda Tingkat I / III.b</option>
+              <option>Penata / III.c</option>
+              <option>Penata Tingkat I / III.d</option>
+              <option>Pembina / IV.a</option>
+              <option>Pembina Tingkat I / IV.b</option>
+              <option>Pembina Utama Muda / IV.c</option>
+              <option>Pembina Utama Madya / IV.d</option>
+              <option>Pembina Utama / IV.e</option>
+            </select>
+          </label>
+
+          <label>Jabatan*
+            <input id="jabatan" required>
+          </label>
+
+          <label>Instansi*
+            <input id="instansi" required>
+          </label>
+
+          <label>Unit Kerja*
+            <input id="unit" required>
+          </label>
+
+          <label>Nomor Handphone (WhatsApp Aktif)*
+            <input id="wa" type="tel" required>
+          </label>
+
+          <label>Email*
+            <input id="email" type="email">
+          </label>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="primary" onclick="next()">Lanjut ke Dokumen →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 2 -->
+    <section class="step" id="s2">
+      <div class="card">
+        <div class="title">
+          <small>STEP 2</small>
+          <h2>Dokumen Persyaratan</h2>
+          <p>Upload dokumen PDF, JPG, atau PNG dengan ukuran maksimal 5 MB per file.</p>
+        </div>
+
+        <div id="docs"></div>
+
+        <div id="heirSection" class="heir-section">
+          <div class="heir-title">
+            <span>DOKUMEN TAMBAHAN</span>
+            <h3>Dokumen Ahli Waris</h3>
+            <p>Dokumen berikut wajib diunggah karena keperluan yang dipilih adalah pemberhentian karena meninggal dunia.</p>
+          </div>
+          <div id="heirDocs"></div>
+        </div>
+
+        <div class="check">
+          <h3>Checklist Kelengkapan</h3>
+
+          <label>
+            <input type="checkbox" required>
+            Saya memastikan seluruh data yang diisi benar dan sesuai dengan dokumen resmi.
+          </label>
+
+          <label>
+            <input type="checkbox" required>
+            Saya memastikan dokumen yang diunggah benar dan dapat dibaca dengan jelas.
+          </label>
+
+          <label>
+            <input type="checkbox" required>
+            Saya menyetujui data dan dokumen digunakan untuk proses pelayanan SKBT.
+          </label>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="secondary" onclick="prev()">← Kembali</button>
+          <button type="button" class="primary" onclick="next()">Review Pengajuan →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 3 -->
+    <section class="step" id="s3">
+      <div class="card">
+        <div class="title">
+          <small>STEP 3</small>
+          <h2>Review Pengajuan</h2>
+          <p>Periksa kembali seluruh data dan dokumen sebelum dikirim.</p>
+        </div>
+
+        <div id="review" class="review"></div>
+
+        <h3>Dokumen yang Diunggah</h3>
+        <ul id="reviewDocs"></ul>
+
+        <label class="confirm">
+          <input id="final" type="checkbox" required>
+          Saya telah memeriksa seluruh data dan dokumen dan menyatakan informasi yang diberikan benar serta dapat dipertanggungjawabkan.
+        </label>
+
+        <div class="actions">
+          <button type="button" class="secondary" onclick="prev()">← Kembali</button>
+          <button type="submit" class="success">✓ Kirim Permohonan</button>
+		  <div
+  id="submitLoading"
+  class="submit-loading"
+  aria-live="polite"
+>
+  <span class="loading-spinner"></span>
+
+  <span id="loadingText">
+    Mengirim permohonan...
+  </span>
+</div>
+        </div>
+      </div>
+    </section>
+
+  </form>
+
+  <section id="success" class="success-box">
+    <div class="ok">✓</div>
+    <h2>Permohonan Berhasil Dikirim</h2>
+    <p>Nomor permohonan Anda:</p>
+    <strong id="number"></strong>
+    <p>Simpan nomor ini untuk pengecekan status permohonan.</p>
+  </section>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
