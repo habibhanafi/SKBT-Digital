@@ -641,485 +641,153 @@
 
 
 <script>
-
-
 /* =========================================================
    URL WEB APP GOOGLE APPS SCRIPT
-   =========================================================
-
-   GANTI URL DI BAWAH DENGAN URL DEPLOYMENT
-   YANG SAMA DENGAN SISTEM SKBT ANDA.
-
-   Contoh:
-   https://script.google.com/macros/s/XXXXX/exec
-
    ========================================================= */
-
 const GOOGLE_SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbxx4rP2GgaI2hGNdyZsp6pjdn-4q2OGukch5zCMVLP4SwKiGumKnwVp6FmVyQamVWcH/exec";
-  
 
+const form = document.getElementById("statusForm");
+const nomorInput = document.getElementById("nomor");
+const cekButton = document.getElementById("cekButton");
+const loading = document.getElementById("loading");
+const errorBox = document.getElementById("error");
+const result = document.getElementById("result");
 
-/* =========================================================
-   ELEMENT
-   ========================================================= */
-
-const form =
-  document.getElementById(
-    "statusForm"
-  );
-
-const nomorInput =
-  document.getElementById(
-    "nomor"
-  );
-
-const cekButton =
-  document.getElementById(
-    "cekButton"
-  );
-
-const loading =
-  document.getElementById(
-    "loading"
-  );
-
-const errorBox =
-  document.getElementById(
-    "error"
-  );
-
-const result =
-  document.getElementById(
-    "result"
-  );
-
-
-/* =========================================================
-   SUBMIT
-   ========================================================= */
-
-form.addEventListener(
-  "submit",
-  function(event) {
-
-    event.preventDefault();
-
-
-    const nomor =
-      nomorInput.value
-        .trim()
-        .toUpperCase();
-
-
-    if (!nomor) {
-
-      tampilkanError(
-        "Silakan masukkan nomor permohonan."
-      );
-
-      return;
-
-    }
-
-
-    cekStatus(nomor);
-
+form.addEventListener("submit", function (event) {
+  event.preventDefault();
+  const nomor = nomorInput.value.trim().toUpperCase();
+  if (!nomor) {
+    tampilkanError("Silakan masukkan nomor permohonan.");
+    return;
   }
-);
-
+  cekStatus(nomor);
+});
 
 /* =========================================================
-   CEK STATUS
+   CEK STATUS - JSONP, sehingga tidak terkena CORS fetch
    ========================================================= */
-
 function cekStatus(nomor) {
+  result.classList.remove("show");
+  errorBox.classList.remove("show");
+  loading.classList.add("show");
+  cekButton.disabled = true;
+  cekButton.innerHTML = "⏳ Memeriksa...";
 
+  const callbackName =
+    "skbtStatusCallback_" + Date.now() + "_" +
+    Math.floor(Math.random() * 100000);
 
-  /* HILANGKAN HASIL LAMA */
+  let selesai = false;
+  const script = document.createElement("script");
+  script.async = true;
 
-  result.classList.remove(
-    "show"
-  );
+  window[callbackName] = function (response) {
+    if (selesai) return;
+    selesai = true;
 
-  errorBox.classList.remove(
-    "show"
-  );
-
-
-  /* TAMPILKAN LOADING */
-
-  loading.classList.add(
-    "show"
-  );
-
-
-  /* KUNCI TOMBOL */
-
-  cekButton.disabled =
-    true;
-
-  cekButton.innerHTML =
-    "⏳ Memeriksa...";
-
-
-  /*
-   * Buat iframe tersembunyi.
-   *
-   * Halaman cek-status tetap berada
-   * di website/CMS Anda.
-   */
-
-  const iframe =
-    document.createElement(
-      "iframe"
-    );
-
-
-  iframe.style.display =
-    "none";
-
-  iframe.name =
-    "cekStatusFrame-" +
-    Date.now();
-
-
-  document.body.appendChild(
-    iframe
-  );
-
-
-  const url =
-    GOOGLE_SCRIPT_URL +
-    "?action=cekStatus" +
-    "&nomor=" +
-    encodeURIComponent(
-      nomor
-    );
-
-
-  iframe.src =
-    url;
-
-
-  /*
-   * Pengaman timeout
-   */
-
-  setTimeout(
-    function() {
-
-      if (
-        loading.classList.contains(
-          "show"
-        )
-      ) {
-
-        loading.classList.remove(
-          "show"
-        );
-
-        cekButton.disabled =
-          false;
-
-        cekButton.innerHTML =
-          "🔍 Cek Status";
-
-
+    try {
+      if (!response || response.success !== true) {
         tampilkanError(
-          "Server membutuhkan waktu terlalu lama. Silakan coba lagi."
+          response && response.message
+            ? response.message
+            : "Nomor permohonan tidak ditemukan."
         );
-
+        return;
       }
+      tampilkanHasil(response.data);
+    } catch (error) {
+      console.error("Kesalahan memproses response:", error);
+      tampilkanError("Data status diterima tetapi gagal ditampilkan.");
+    } finally {
+      selesaiCek(callbackName, script);
+    }
+  };
 
-    },
-    15000
-  );
+  script.onerror = function () {
+    if (selesai) return;
+    selesai = true;
+    tampilkanError("Server tidak dapat dihubungi. Silakan coba lagi.");
+    selesaiCek(callbackName, script);
+  };
 
+  script.src =
+    GOOGLE_SCRIPT_URL +
+    "?nomor=" + encodeURIComponent(nomor) +
+    "&callback=" + encodeURIComponent(callbackName);
+
+  document.body.appendChild(script);
+
+  setTimeout(function () {
+    if (selesai) return;
+    selesai = true;
+    tampilkanError("Server membutuhkan waktu terlalu lama. Silakan coba lagi.");
+    selesaiCek(callbackName, script);
+  }, 15000);
 }
 
-
-/* =========================================================
-   MENERIMA RESPONSE DARI APPS SCRIPT
-   ========================================================= */
-
-window.addEventListener(
-  "message",
-  function(event) {
-
-
-    if (
-      !event.data
-    ) {
-
-      return;
-
-    }
-
-
-    if (
-      event.data.type !==
-      "SKBT_STATUS_RESPONSE"
-    ) {
-
-      return;
-
-    }
-
-
-    /* MATIKAN LOADING */
-
-    loading.classList.remove(
-      "show"
-    );
-
-
-    /* AKTIFKAN KEMBALI TOMBOL */
-
-    cekButton.disabled =
-      false;
-
-    cekButton.innerHTML =
-      "🔍 Cek Status";
-
-
-    const response =
-      event.data.data;
-
-
-    if (
-      !response ||
-      response.success !== true
-    ) {
-
-      tampilkanError(
-
-        response &&
-        response.message
-
-          ? response.message
-
-          : "Nomor permohonan tidak ditemukan."
-
-      );
-
-
-      return;
-
-    }
-
-
-    tampilkanHasil(
-      response.data
-    );
-
-  }
-);
-
-
-/* =========================================================
-   TAMPILKAN HASIL
-   ========================================================= */
+function selesaiCek(callbackName, script) {
+  loading.classList.remove("show");
+  cekButton.disabled = false;
+  cekButton.innerHTML = "🔍 Cek Status";
+  if (script && script.parentNode) script.parentNode.removeChild(script);
+  try { delete window[callbackName]; }
+  catch (e) { window[callbackName] = undefined; }
+}
 
 function tampilkanHasil(data) {
+  result.classList.add("show");
 
+  document.getElementById("rNomor").textContent = data.nomor || "-";
+  document.getElementById("rNama").textContent = data.nama || "-";
+  document.getElementById("rNip").textContent = data.nip || "-";
+  document.getElementById("rKeperluan").textContent = data.keperluan || "-";
+  document.getElementById("rPangkat").textContent = data.pangkat || "-";
+  document.getElementById("rJabatan").textContent = data.jabatan || "-";
+  document.getElementById("rInstansi").textContent = data.instansi || "-";
+  document.getElementById("rUnit").textContent = data.unit || data.unitKerja || "-";
+  document.getElementById("rTanggal").textContent = data.tanggalPengajuan || data.timestamp || "-";
+  document.getElementById("rTanggalPemeriksaan").textContent = data.tanggalPemeriksaan || "-";
+  document.getElementById("rPetugas").textContent = data.petugas || "-";
 
-  result.classList.add(
-    "show"
-  );
+  const statusElement = document.getElementById("status");
+  const statusText = data.status || "Menunggu Pemeriksaan";
+  statusElement.textContent = statusText;
+  statusElement.className = "status";
 
-
-  document.getElementById(
-    "rNomor"
-  ).textContent =
-    data.nomor || "-";
-
-
-  document.getElementById(
-    "rNama"
-  ).textContent =
-    data.nama || "-";
-
-
-  document.getElementById(
-    "rNip"
-  ).textContent =
-    data.nip || "-";
-
-
-  document.getElementById(
-    "rKeperluan"
-  ).textContent =
-    data.keperluan || "-";
-
-
-  document.getElementById(
-    "rPangkat"
-  ).textContent =
-    data.pangkat || "-";
-
-
-  document.getElementById(
-    "rJabatan"
-  ).textContent =
-    data.jabatan || "-";
-
-
-  document.getElementById(
-    "rInstansi"
-  ).textContent =
-    data.instansi || "-";
-
-
-  document.getElementById(
-    "rUnit"
-  ).textContent =
-    data.unit || "-";
-
-
-  document.getElementById(
-    "rTanggal"
-  ).textContent =
-    data.tanggalPengajuan || "-";
-
-
-  document.getElementById(
-    "rTanggalPemeriksaan"
-  ).textContent =
-    data.tanggalPemeriksaan || "-";
-
-
-  document.getElementById(
-    "rPetugas"
-  ).textContent =
-    data.petugas || "-";
-
-
-  /* =====================================================
-     STATUS
-     ===================================================== */
-
-  const statusElement =
-    document.getElementById(
-      "status"
-    );
-
-
-  const statusText =
-    data.status ||
-    "Menunggu Pemeriksaan";
-
-
-  statusElement.textContent =
-    statusText;
-
-
-  statusElement.className =
-    "status";
-
-
-  const statusLower =
-    statusText.toLowerCase();
-
-
-  if (
-    statusLower.includes(
-      "menunggu"
-    )
+  const statusLower = String(statusText).toLowerCase();
+  if (statusLower.includes("menunggu")) {
+    statusElement.classList.add("waiting");
+  } else if (
+    statusLower.includes("bebas") ||
+    statusLower.includes("selesai") ||
+    statusLower.includes("disetujui")
   ) {
-
-    statusElement.classList.add(
-      "waiting"
-    );
-
-  }
-
-  else if (
-    statusLower.includes(
-      "bebas"
-    ) ||
-    statusLower.includes(
-      "selesai"
-    ) ||
-    statusLower.includes(
-      "disetujui"
-    )
+    statusElement.classList.add("success");
+  } else if (
+    statusLower.includes("temuan") ||
+    statusLower.includes("ditolak")
   ) {
-
-    statusElement.classList.add(
-      "success"
-    );
-
+    statusElement.classList.add("warning");
+  } else {
+    statusElement.classList.add("info");
   }
 
-  else if (
-    statusLower.includes(
-      "temuan"
-    ) ||
-    statusLower.includes(
-      "ditolak"
-    )
-  ) {
-
-    statusElement.classList.add(
-      "warning"
-    );
-
-  }
-
-  else {
-
-    statusElement.classList.add(
-      "info"
-    );
-
-  }
-
+  result.scrollIntoView({ behavior: "smooth", block: "start" });
 }
-
-
-/* =========================================================
-   ERROR
-   ========================================================= */
 
 function tampilkanError(message) {
-
-  errorBox.textContent =
-    message;
-
-  errorBox.classList.add(
-    "show"
-  );
-
+  result.classList.remove("show");
+  errorBox.textContent = message;
+  errorBox.classList.add("show");
 }
-
-
-/* =========================================================
-   RESET
-   ========================================================= */
 
 function resetForm() {
-
-
-  result.classList.remove(
-    "show"
-  );
-
-
-  errorBox.classList.remove(
-    "show"
-  );
-
-
-  nomorInput.value =
-    "";
-
-
+  result.classList.remove("show");
+  errorBox.classList.remove("show");
+  nomorInput.value = "";
   nomorInput.focus();
-
 }
-
-
 </script>
 
 
