@@ -11,7 +11,7 @@
 >
 
 <title>
-  Asisten SKBT Digital
+Asisten SKBT Digital
 </title>
 
 <style>
@@ -32,117 +32,106 @@ body {
   background:
     #f1f5f9;
 
-  color:
-    #1e293b;
+}
+
+
+/* ===============================
+   CHAT CONTAINER
+================================ */
+
+.chatbot {
+
+  width: 100%;
+
+  max-width: 520px;
+
+  height: 650px;
+
+  margin: 30px auto;
+
+  background: white;
+
+  border-radius: 18px;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 10px 30px
+    rgba(0,0,0,0.12);
+
+  display: flex;
+
+  flex-direction: column;
 
 }
 
 
-/* =====================================================
-   CONTAINER
-   ===================================================== */
-
-.chat-container {
-
-  width:
-    100%;
-
-  max-width:
-    700px;
-
-  height:
-    100vh;
-
-  max-height:
-    850px;
-
-  margin:
-    auto;
-
-  background:
-    white;
-
-  display:
-    flex;
-
-  flex-direction:
-    column;
-
-}
-
-
-/* =====================================================
+/* ===============================
    HEADER
-   ===================================================== */
+================================ */
 
 .chat-header {
 
   background:
     #0f766e;
 
-  color:
-    white;
+  color: white;
 
-  padding:
-    18px;
-
-}
-
-.chat-header h2 {
-
-  margin:
-    0;
-
-  font-size:
-    20px;
-
-}
-
-.chat-header p {
-
-  margin:
-    5px 0 0;
-
-  font-size:
-    13px;
-
-  opacity:
-    .9;
+  padding: 18px;
 
 }
 
 
-/* =====================================================
-   CHAT
-   ===================================================== */
+.chat-header-title {
 
-.chat-box {
+  font-size: 19px;
 
-  flex:
-    1;
-
-  overflow-y:
-    auto;
-
-  padding:
-    18px;
+  font-weight: bold;
 
 }
 
 
-/* =====================================================
+.chat-header-subtitle {
+
+  font-size: 13px;
+
+  margin-top: 4px;
+
+  opacity: 0.9;
+
+}
+
+
+/* ===============================
+   MESSAGE AREA
+================================ */
+
+.chat-messages {
+
+  flex: 1;
+
+  padding: 18px;
+
+  overflow-y: auto;
+
+  background:
+    #f8fafc;
+
+}
+
+
+/* ===============================
    MESSAGE
-   ===================================================== */
+================================ */
 
 .message {
 
-  display:
-    flex;
+  display: flex;
 
-  margin-bottom:
-    14px;
+  margin-bottom: 14px;
 
 }
+
 
 .message.user {
 
@@ -151,6 +140,7 @@ body {
 
 }
 
+
 .message.bot {
 
   justify-content:
@@ -158,48 +148,49 @@ body {
 
 }
 
+
 .bubble {
 
-  max-width:
-    82%;
+  max-width: 82%;
 
-  padding:
-    11px 14px;
+  padding: 12px 15px;
 
-  border-radius:
-    14px;
+  border-radius: 14px;
 
-  font-size:
-    14px;
+  font-size: 14px;
 
-  line-height:
-    1.5;
+  line-height: 1.5;
 
-  white-space:
-    pre-wrap;
+  white-space: pre-wrap;
 
 }
 
-.user .bubble {
+
+.message.user
+.bubble {
 
   background:
     #0f766e;
 
-  color:
-    white;
+  color: white;
 
   border-bottom-right-radius:
     4px;
 
 }
 
-.bot .bubble {
+
+.message.bot
+.bubble {
 
   background:
-    #f1f5f9;
+    white;
 
   color:
     #1e293b;
+
+  border:
+    1px solid #e2e8f0;
 
   border-bottom-left-radius:
     4px;
@@ -207,50 +198,36 @@ body {
 }
 
 
-/* =====================================================
+/* ===============================
    QUICK QUESTIONS
-   ===================================================== */
-
-.quick {
-
-  padding:
-    10px 15px;
-
-  border-top:
-    1px solid #e2e8f0;
-
-  background:
-    white;
-
-}
-
-.quick-title {
-
-  font-size:
-    12px;
-
-  color:
-    #64748b;
-
-  margin-bottom:
-    8px;
-
-}
+================================ */
 
 .quick-buttons {
+
+  padding:
+    10px 14px;
 
   display:
     flex;
 
-  gap:
-    7px;
+  gap: 8px;
 
   overflow-x:
     auto;
 
+  background:
+    white;
+
+  border-top:
+    1px solid #e2e8f0;
+
 }
 
-.quick button {
+
+.quick-buttons button {
+
+  white-space:
+    nowrap;
 
   border:
     1px solid #cbd5e1;
@@ -262,20 +239,18 @@ body {
     20px;
 
   padding:
-    8px 12px;
-
-  font-size:
-    12px;
-
-  white-space:
-    nowrap;
+    7px 12px;
 
   cursor:
     pointer;
 
+  font-size:
+    12px;
+
 }
 
-.quick button:hover {
+
+.quick-buttons button:hover {
 
   background:
     #f1f5f9;
@@ -283,11 +258,11 @@ body {
 }
 
 
-/* =====================================================
+/* ===============================
    INPUT
-   ===================================================== */
+================================ */
 
-.input-area {
+.chat-input {
 
   display:
     flex;
@@ -295,15 +270,16 @@ body {
   padding:
     12px;
 
+  background:
+    white;
+
   border-top:
     1px solid #e2e8f0;
 
-  gap:
-    8px;
-
 }
 
-.input-area input {
+
+.chat-input input {
 
   flex:
     1;
@@ -325,20 +301,14 @@ body {
 
 }
 
-.input-area input:focus {
 
-  border-color:
-    #0f766e;
+.chat-input button {
 
-}
-
-.input-area button {
+  margin-left:
+    8px;
 
   width:
-    44px;
-
-  height:
-    44px;
+    45px;
 
   border:
     none;
@@ -360,20 +330,18 @@ body {
 
 }
 
-.input-area button:disabled {
+
+.chat-input button:disabled {
 
   opacity:
-    .5;
-
-  cursor:
-    not-allowed;
+    0.5;
 
 }
 
 
-/* =====================================================
+/* ===============================
    TYPING
-   ===================================================== */
+================================ */
 
 .typing {
 
@@ -384,32 +352,7 @@ body {
     #64748b;
 
   padding:
-    5px 0;
-
-}
-
-
-/* =====================================================
-   MOBILE
-   ===================================================== */
-
-@media (
-  max-width: 600px
-) {
-
-  .chat-container {
-
-    max-height:
-      none;
-
-  }
-
-  .bubble {
-
-    max-width:
-      90%;
-
-  }
+    5px 2px;
 
 }
 
@@ -421,88 +364,114 @@ body {
 <body>
 
 
-<div class="chat-container">
+<div class="chatbot">
 
 
   <!-- HEADER -->
 
   <div class="chat-header">
 
-    <h2>
-      🤖 Asisten SKBT Digital
-    </h2>
+    <div class="chat-header-title">
 
-    <p>
-      Informasi layanan SKBT Inspektorat
-      Daerah Kabupaten Aceh Timur
-    </p>
+      🤖 Asisten SKBT Digital
+
+    </div>
+
+    <div class="chat-header-subtitle">
+
+      Informasi layanan SKBT
+      Inspektorat Daerah Kabupaten Aceh Timur
+
+    </div>
 
   </div>
 
 
-  <!-- CHAT -->
+  <!-- PESAN -->
 
   <div
-    id="chatBox"
-    class="chat-box"
-  ></div>
+    id="chatMessages"
+    class="chat-messages"
+  >
 
+    <div class="message bot">
 
-  <!-- QUICK QUESTIONS -->
+      <div class="bubble">
 
-  <div class="quick">
+        Halo 👋
 
-    <div class="quick-title">
-      Pertanyaan yang sering ditanyakan
-    </div>
+        Saya Asisten SKBT Digital.
 
-    <div class="quick-buttons">
+        Saya dapat membantu memberikan
+        informasi mengenai layanan
+        Surat Keterangan Bebas Temuan (SKBT).
 
-      <button
-        onclick="quickQuestion('Apa itu SKBT?')"
-      >
-        Apa itu SKBT?
-      </button>
+        Silakan tanyakan sesuatu, misalnya:
 
-      <button
-        onclick="quickQuestion('Apa saja persyaratan SKBT?')"
-      >
-        Persyaratan
-      </button>
+        • Apa itu SKBT?
+        • Apa saja persyaratannya?
+        • Dokumen apa yang harus disiapkan?
+        • Apa itu Nomor Permohonan?
 
-      <button
-        onclick="quickQuestion('Bagaimana cara mengajukan SKBT?')"
-      >
-        Cara Pengajuan
-      </button>
-
-      <button
-        onclick="quickQuestion('Dokumen apa saja yang harus disiapkan?')"
-      >
-        Dokumen
-      </button>
+      </div>
 
     </div>
+
+  </div>
+
+
+  <!-- PERTANYAAN CEPAT -->
+
+  <div class="quick-buttons">
+
+    <button
+      onclick="quickQuestion('Apa itu SKBT?')"
+    >
+      Apa itu SKBT?
+    </button>
+
+
+    <button
+      onclick="quickQuestion('Apa saja persyaratan SKBT?')"
+    >
+      Persyaratan
+    </button>
+
+
+    <button
+      onclick="quickQuestion('Apa itu Nomor Permohonan?')"
+    >
+      Nomor Permohonan
+    </button>
+
+
+    <button
+      onclick="quickQuestion('Apa saja status permohonan SKBT?')"
+    >
+      Status
+    </button>
 
   </div>
 
 
   <!-- INPUT -->
 
-  <div class="input-area">
+  <div class="chat-input">
 
     <input
-      id="messageInput"
+      id="questionInput"
       type="text"
-      placeholder="Tulis pertanyaan Anda..."
+      placeholder="Tulis pertanyaan..."
       autocomplete="off"
     >
 
     <button
       id="sendButton"
-      onclick="sendMessage()"
+      onclick="sendQuestion()"
     >
+
       ➤
+
     </button>
 
   </div>
@@ -514,27 +483,23 @@ body {
 <script>
 
 
-/* =====================================================
-   KONFIGURASI
-   ===================================================== */
+/* ==========================================
+   URL CLOUDFLARE WORKER
+========================================== */
 
 const WORKER_URL =
-  "https://quiet-bush-fe39.muhammadhabib348.workers.dev/";
+  "https://NAMA-WORKER-ANDA.workers.dev";
 
 
-/* =====================================================
+/* ==========================================
    ELEMENT
-   ===================================================== */
-
-const chatBox =
-  document.getElementById(
-    "chatBox"
-  );
+========================================== */
 
 const input =
   document.getElementById(
-    "messageInput"
+    "questionInput"
   );
+
 
 const sendButton =
   document.getElementById(
@@ -542,58 +507,55 @@ const sendButton =
   );
 
 
-/* =====================================================
-   HISTORY
-   ===================================================== */
+const messages =
+  document.getElementById(
+    "chatMessages"
+  );
 
-let history = [];
+
+/* ==========================================
+   ENTER
+========================================== */
+
+input.addEventListener(
+  "keydown",
+  function(event) {
+
+    if (
+      event.key === "Enter"
+    ) {
+
+      sendQuestion();
+
+    }
+
+  }
+);
 
 
-/* =====================================================
-   ESCAPE HTML
-   ===================================================== */
+/* ==========================================
+   QUICK QUESTION
+========================================== */
 
-function escapeHtml(
-  text
+function quickQuestion(
+  question
 ) {
 
-  return String(text)
+  input.value =
+    question;
 
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-
-    .replace(
-      /</g,
-      "&lt;"
-    )
-
-    .replace(
-      />/g,
-      "&gt;"
-    )
-
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-
-    .replace(
-      /'/g,
-      "&#039;"
-    );
+  sendQuestion();
 
 }
 
 
-/* =====================================================
+/* ==========================================
    TAMBAH PESAN
-   ===================================================== */
+========================================== */
 
 function addMessage(
   text,
-  sender
+  type
 ) {
 
   const message =
@@ -601,9 +563,10 @@ function addMessage(
       "div"
     );
 
+
   message.className =
     "message " +
-    sender;
+    type;
 
 
   const bubble =
@@ -611,14 +574,13 @@ function addMessage(
       "div"
     );
 
+
   bubble.className =
     "bubble";
 
 
-  bubble.innerHTML =
-    escapeHtml(
-      text
-    );
+  bubble.textContent =
+    text;
 
 
   message.appendChild(
@@ -626,20 +588,20 @@ function addMessage(
   );
 
 
-  chatBox.appendChild(
+  messages.appendChild(
     message
   );
 
 
-  chatBox.scrollTop =
-    chatBox.scrollHeight;
+  messages.scrollTop =
+    messages.scrollHeight;
 
 }
 
 
-/* =====================================================
+/* ==========================================
    TYPING
-   ===================================================== */
+========================================== */
 
 function showTyping() {
 
@@ -648,23 +610,26 @@ function showTyping() {
       "div"
     );
 
+
   typing.id =
-    "typing";
+    "typingIndicator";
+
 
   typing.className =
     "typing";
+
 
   typing.textContent =
     "Asisten sedang mengetik...";
 
 
-  chatBox.appendChild(
+  messages.appendChild(
     typing
   );
 
 
-  chatBox.scrollTop =
-    chatBox.scrollHeight;
+  messages.scrollTop =
+    messages.scrollHeight;
 
 }
 
@@ -673,8 +638,9 @@ function hideTyping() {
 
   const typing =
     document.getElementById(
-      "typing"
+      "typingIndicator"
     );
+
 
   if (typing) {
 
@@ -685,38 +651,38 @@ function hideTyping() {
 }
 
 
-/* =====================================================
-   KIRIM PESAN
-   ===================================================== */
+/* ==========================================
+   KIRIM PERTANYAAN
+========================================== */
 
-async function sendMessage(
-  customMessage = ""
-) {
+async function sendQuestion() {
 
-  const message =
-    (
-      customMessage ||
-      input.value
-    ).trim();
+  const question =
+    input.value.trim();
 
 
-  if (!message) {
+  if (!question) {
+
     return;
+
   }
 
 
+  // Tampilkan pertanyaan
+
   addMessage(
-    message,
+    question,
     "user"
   );
 
+
+  // Kosongkan input
 
   input.value =
     "";
 
 
-  input.disabled =
-    true;
+  // Nonaktifkan tombol
 
   sendButton.disabled =
     true;
@@ -729,7 +695,9 @@ async function sendMessage(
 
     const response =
       await fetch(
+
         WORKER_URL,
+
         {
 
           method:
@@ -745,89 +713,64 @@ async function sendMessage(
           body:
             JSON.stringify({
 
-              message:
-                message,
-
-              history:
-                history
+              question:
+                question
 
             })
 
         }
+
       );
 
 
-    const data =
+    const result =
       await response.json();
+
+
+    console.log(
+      "RESPONSE CHATBOT:",
+      result
+    );
 
 
     hideTyping();
 
 
+    /*
+     * PENTING:
+     *
+     * Worker kita mengembalikan:
+     *
+     * {
+     *   success: true,
+     *   answer: "..."
+     * }
+     *
+     */
+
+
     if (
-      !data.success
+      result.success &&
+      result.answer
     ) {
 
       addMessage(
+        result.answer,
+        "bot"
+      );
 
-        data.error ||
-        "Maaf, terjadi kesalahan.",
+    }
+
+    else {
+
+      addMessage(
+
+        result.answer ||
+        "Maaf, terjadi kesalahan saat memperoleh jawaban.",
 
         "bot"
 
       );
-
-      return;
-
-    }
-
-
-    const answer =
-      data.answer;
-
-
-    addMessage(
-      answer,
-      "bot"
-    );
-
-
-    /*
-     * Simpan percakapan
-     */
-
-    history.push({
-
-      role:
-        "user",
-
-      content:
-        message
-
-    });
-
-
-    history.push({
-
-      role:
-        "assistant",
-
-      content:
-        answer
-
-    });
-
-
-    /*
-     * Batasi history
-     */
-
-    if (
-      history.length > 12
-    ) {
-
-      history =
-        history.slice(-12);
 
     }
 
@@ -837,6 +780,7 @@ async function sendMessage(
   catch (error) {
 
     console.error(
+      "CHATBOT ERROR:",
       error
     );
 
@@ -846,8 +790,7 @@ async function sendMessage(
 
     addMessage(
 
-      "Maaf, chatbot sedang mengalami kendala. " +
-      "Silakan coba beberapa saat lagi.",
+      "Maaf, chatbot tidak dapat terhubung ke server.",
 
       "bot"
 
@@ -856,81 +799,14 @@ async function sendMessage(
   }
 
 
-  finally {
+  sendButton.disabled =
+    false;
 
-    input.disabled =
-      false;
 
-    sendButton.disabled =
-      false;
-
-    input.focus();
-
-  }
+  input.focus();
 
 }
 
-
-/* =====================================================
-   QUICK QUESTION
-   ===================================================== */
-
-function quickQuestion(
-  question
-) {
-
-  sendMessage(
-    question
-  );
-
-}
-
-
-/* =====================================================
-   ENTER
-   ===================================================== */
-
-input.addEventListener(
-
-  "keydown",
-
-  function(event) {
-
-    if (
-      event.key === "Enter"
-    ) {
-
-      event.preventDefault();
-
-      sendMessage();
-
-    }
-
-  }
-
-);
-
-
-/* =====================================================
-   PESAN AWAL
-   ===================================================== */
-
-addMessage(
-
-  "Halo 👋\n\n" +
-
-  "Saya Asisten SKBT Digital. " +
-
-  "Saya dapat membantu menjawab pertanyaan " +
-  "mengenai layanan Surat Keterangan Bebas " +
-  "Temuan (SKBT) Inspektorat Daerah " +
-  "Kabupaten Aceh Timur.\n\n" +
-
-  "Silakan tanyakan apa yang ingin Anda ketahui.",
-
-  "bot"
-
-);
 
 </script>
 
