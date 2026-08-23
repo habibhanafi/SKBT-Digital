@@ -1404,31 +1404,24 @@ async function sendMessage() {
 
   try {
 
-    const response =
-      await fetch(
-        WORKER_URL,
-        {
+    const response = await fetch(
+  "https://quiet-bush-fe39.muhammadhabib348.workers.dev/",
+  {
+    method: "POST",
 
-          method:
-            "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
 
-          headers: {
+    body: JSON.stringify({
+      message: "Apa itu SKBT?"
+    })
+  }
+);
 
-            "Content-Type":
-              "application/json"
+const data = await response.json();
 
-          },
-
-          body:
-            JSON.stringify({
-
-              message:
-                text
-
-            })
-
-        }
-      );
+console.log(data);
 
 
     /*
