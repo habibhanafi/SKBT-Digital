@@ -1,953 +1,513 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+<title>Asisten SKBT Digital</title>
 
-  <title>Asisten SKBT Digital</title>
+<style>
 
-  <style>
+* {
+  box-sizing: border-box;
+}
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+body {
+  margin: 0;
+  font-family:
+    Inter,
+    Arial,
+    sans-serif;
 
-    body {
-      font-family:
-        Inter,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Roboto,
-        Arial,
-        sans-serif;
+  background:
+    linear-gradient(
+      135deg,
+      #eef6ff,
+      #f8fbff
+    );
 
-      background:
-        linear-gradient(
-          135deg,
-          #eef6ff,
-          #f8fafc
-        );
+  min-height: 100vh;
 
-      min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-      color: #1e293b;
-    }
 
+/* =====================================================
+   CHATBOT
+   ===================================================== */
 
-    /* =====================================================
-       CONTAINER
-       ===================================================== */
+.chat-container {
 
-    .chat-wrapper {
+  width: 100%;
+  max-width: 480px;
 
-      width: 100%;
-      max-width: 900px;
+  height: 720px;
 
-      height: 100vh;
-      max-height: 850px;
+  background: white;
 
-      margin: auto;
+  border-radius: 24px;
 
-      display: flex;
-      flex-direction: column;
+  box-shadow:
+    0 20px 60px
+    rgba(0,0,0,0.12);
 
-      background: #ffffff;
+  display: flex;
+  flex-direction: column;
 
-      box-shadow:
-        0 20px 60px
-        rgba(15, 23, 42, 0.12);
+  overflow: hidden;
+}
 
-      overflow: hidden;
-    }
 
+/* =====================================================
+   HEADER
+   ===================================================== */
 
-    /* =====================================================
-       HEADER
-       ===================================================== */
+.chat-header {
 
-    .header {
+  background:
+    linear-gradient(
+      135deg,
+      #0f766e,
+      #0d9488
+    );
 
-      background:
-        linear-gradient(
-          135deg,
-          #0f4c81,
-          #1565a8
-        );
+  color: white;
 
-      color: white;
+  padding: 20px;
 
-      padding: 22px 24px;
+  display: flex;
+  align-items: center;
 
-      display: flex;
-      align-items: center;
+  gap: 14px;
+}
 
-      gap: 15px;
 
-      flex-shrink: 0;
-    }
+.logo {
 
+  width: 48px;
+  height: 48px;
 
-    .logo {
+  background: white;
 
-      width: 50px;
-      height: 50px;
+  color: #0f766e;
 
-      border-radius: 14px;
+  border-radius: 50%;
 
-      background:
-        rgba(255,255,255,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-      display: flex;
-      align-items: center;
-      justify-content: center;
+  font-size: 24px;
+}
 
-      font-size: 25px;
 
-      border:
-        1px solid
-        rgba(255,255,255,0.25);
-    }
+.header-title {
 
+  font-size: 18px;
+  font-weight: 700;
 
-    .header-text h1 {
+}
 
-      font-size: 19px;
 
-      font-weight: 700;
+.header-subtitle {
 
-      margin-bottom: 4px;
-    }
+  font-size: 12px;
 
+  opacity: 0.9;
 
-    .header-text p {
+  margin-top: 3px;
 
-      font-size: 13px;
+}
 
-      opacity: 0.9;
-    }
 
+/* =====================================================
+   CHAT AREA
+   ===================================================== */
 
-    .online {
+.chat-messages {
 
-      margin-left: auto;
+  flex: 1;
 
-      display: flex;
-      align-items: center;
+  overflow-y: auto;
 
-      gap: 6px;
+  padding: 20px;
 
-      font-size: 12px;
+  background: #f8fafc;
 
-      opacity: 0.95;
-    }
+}
 
 
-    .online-dot {
+.message {
 
-      width: 8px;
-      height: 8px;
+  display: flex;
 
-      background: #4ade80;
+  margin-bottom: 14px;
 
-      border-radius: 50%;
+}
 
-      box-shadow:
-        0 0 8px
-        rgba(74,222,128,0.8);
-    }
 
+.message.user {
 
-    /* =====================================================
-       CHAT AREA
-       ===================================================== */
+  justify-content: flex-end;
 
-    .chat-area {
+}
 
-      flex: 1;
 
-      overflow-y: auto;
+.bubble {
 
-      padding: 25px;
+  max-width: 82%;
 
-      background:
-        #f8fafc;
+  padding: 12px 15px;
 
-      scroll-behavior: smooth;
-    }
+  border-radius: 16px;
 
+  font-size: 14px;
 
-    /* =====================================================
-       WELCOME
-       ===================================================== */
+  line-height: 1.55;
 
-    .welcome {
+  white-space: pre-wrap;
 
-      text-align: center;
+}
 
-      max-width: 600px;
 
-      margin:
-        20px auto 30px;
-    }
+.message.bot .bubble {
 
+  background: white;
 
-    .welcome-icon {
+  color: #1e293b;
 
-      width: 70px;
-      height: 70px;
+  border:
+    1px solid #e2e8f0;
 
-      margin:
-        0 auto 15px;
+  border-bottom-left-radius: 4px;
 
-      border-radius: 20px;
+}
 
-      background:
-        #e0efff;
 
-      display: flex;
-      align-items: center;
-      justify-content: center;
+.message.user .bubble {
 
-      font-size: 34px;
-    }
+  background: #0f766e;
 
+  color: white;
 
-    .welcome h2 {
+  border-bottom-right-radius: 4px;
 
-      font-size: 22px;
+}
 
-      margin-bottom: 8px;
 
-      color: #0f172a;
-    }
+/* =====================================================
+   QUICK QUESTIONS
+   ===================================================== */
 
+.quick-questions {
 
-    .welcome p {
+  padding: 10px 15px;
 
-      color: #64748b;
+  display: flex;
 
-      font-size: 14px;
+  gap: 8px;
 
-      line-height: 1.6;
-    }
+  overflow-x: auto;
 
+  background: white;
 
-    /* =====================================================
-       QUICK QUESTIONS
-       ===================================================== */
+  border-top:
+    1px solid #e5e7eb;
 
-    .quick-title {
+}
 
-      font-size: 12px;
 
-      font-weight: 600;
+.quick-btn {
 
-      color: #64748b;
+  border: 1px solid #cbd5e1;
 
-      margin-bottom: 10px;
-    }
+  background: white;
 
+  color: #334155;
 
-    .quick-buttons {
+  border-radius: 20px;
 
-      display: flex;
+  padding: 8px 12px;
 
-      flex-wrap: wrap;
+  font-size: 12px;
 
-      gap: 8px;
+  white-space: nowrap;
 
-      margin-bottom: 25px;
-    }
+  cursor: pointer;
 
+}
 
-    .quick-btn {
 
-      border:
-        1px solid #dbe5ef;
+.quick-btn:hover {
 
-      background: white;
+  background: #f1f5f9;
 
-      color: #334155;
+}
 
-      padding:
-        10px 14px;
 
-      border-radius: 20px;
+/* =====================================================
+   INPUT
+   ===================================================== */
 
-      cursor: pointer;
+.chat-input-area {
 
-      font-size: 13px;
+  padding: 12px;
 
-      transition:
-        all 0.2s ease;
-    }
+  background: white;
 
+  border-top:
+    1px solid #e5e7eb;
 
-    .quick-btn:hover {
+  display: flex;
 
-      border-color: #3b82f6;
+  gap: 8px;
 
-      color: #2563eb;
+}
 
-      background: #eff6ff;
 
-      transform:
-        translateY(-1px);
-    }
+.chat-input {
 
+  flex: 1;
 
-    /* =====================================================
-       MESSAGE
-       ===================================================== */
+  border:
+    1px solid #cbd5e1;
 
-    .message-row {
+  border-radius: 22px;
 
-      display: flex;
+  padding:
+    12px 16px;
 
-      margin-bottom: 18px;
+  outline: none;
 
-      gap: 10px;
+  font-size: 14px;
 
-      animation:
-        fadeIn 0.25s ease;
-    }
+}
 
 
-    .message-row.user {
+.chat-input:focus {
 
-      justify-content: flex-end;
-    }
+  border-color: #0f766e;
 
+}
 
-    .avatar {
 
-      width: 36px;
-      height: 36px;
+.send-btn {
 
-      flex-shrink: 0;
+  width: 46px;
+  height: 46px;
 
-      border-radius: 12px;
+  border: none;
 
-      display: flex;
-      align-items: center;
-      justify-content: center;
+  border-radius: 50%;
 
-      font-size: 17px;
-    }
+  background: #0f766e;
 
+  color: white;
 
-    .bot-avatar {
+  cursor: pointer;
 
-      background:
-        #e0efff;
-    }
+  font-size: 18px;
 
+  display: flex;
 
-    .user-avatar {
+  align-items: center;
+  justify-content: center;
 
-      background:
-        #dbeafe;
-    }
+}
 
 
-    .message-content {
+.send-btn:hover {
 
-      max-width: 75%;
-    }
+  background: #115e59;
 
+}
 
-    .message {
 
-      padding:
-        13px 16px;
+.send-btn:disabled {
 
-      border-radius: 16px;
+  background: #94a3b8;
 
-      font-size: 14px;
+  cursor: not-allowed;
 
-      line-height: 1.6;
+}
 
-      white-space: pre-wrap;
 
-      word-wrap: break-word;
-    }
+/* =====================================================
+   TYPING
+   ===================================================== */
 
+.typing {
 
-    .bot-message {
+  display: none;
 
-      background: white;
+  padding: 10px 15px;
 
-      border:
-        1px solid #e2e8f0;
+  font-size: 12px;
 
-      border-top-left-radius: 5px;
+  color: #64748b;
 
-      color: #334155;
+}
 
-      box-shadow:
-        0 2px 8px
-        rgba(15,23,42,0.04);
-    }
 
+/* =====================================================
+   MOBILE
+   ===================================================== */
 
-    .user-message {
+@media (max-width: 600px) {
 
-      background:
-        #2563eb;
+  body {
 
-      color: white;
+    align-items: stretch;
 
-      border-top-right-radius: 5px;
-    }
+  }
 
+  .chat-container {
 
-    .time {
+    height: 100vh;
 
-      font-size: 10px;
+    max-width: none;
 
-      color: #94a3b8;
+    border-radius: 0;
 
-      margin-top: 5px;
+  }
 
-      padding:
-        0 4px;
-    }
+}
 
+</style>
 
-    .user .time {
-
-      text-align: right;
-    }
-
-
-    /* =====================================================
-       TYPING
-       ===================================================== */
-
-    .typing {
-
-      display: flex;
-
-      align-items: center;
-
-      gap: 4px;
-
-      padding:
-        14px 17px;
-    }
-
-
-    .typing span {
-
-      width: 7px;
-      height: 7px;
-
-      background:
-        #94a3b8;
-
-      border-radius: 50%;
-
-      animation:
-        typing 1.2s infinite;
-    }
-
-
-    .typing span:nth-child(2) {
-
-      animation-delay:
-        0.15s;
-    }
-
-
-    .typing span:nth-child(3) {
-
-      animation-delay:
-        0.3s;
-    }
-
-
-    /* =====================================================
-       INPUT
-       ===================================================== */
-
-    .input-area {
-
-      background: white;
-
-      border-top:
-        1px solid #e2e8f0;
-
-      padding:
-        15px 20px;
-
-      flex-shrink: 0;
-    }
-
-
-    .input-wrapper {
-
-      display: flex;
-
-      align-items: flex-end;
-
-      gap: 10px;
-
-      max-width: 850px;
-
-      margin: auto;
-    }
-
-
-    #messageInput {
-
-      flex: 1;
-
-      resize: none;
-
-      min-height: 48px;
-
-      max-height: 130px;
-
-      border:
-        1px solid #dbe3ec;
-
-      border-radius: 15px;
-
-      padding:
-        13px 15px;
-
-      font-family: inherit;
-
-      font-size: 14px;
-
-      outline: none;
-
-      color: #1e293b;
-
-      transition:
-        border 0.2s;
-    }
-
-
-    #messageInput:focus {
-
-      border-color:
-        #3b82f6;
-
-      box-shadow:
-        0 0 0 3px
-        rgba(59,130,246,0.08);
-    }
-
-
-    #messageInput::placeholder {
-
-      color: #94a3b8;
-    }
-
-
-    #sendButton {
-
-      width: 48px;
-      height: 48px;
-
-      border: none;
-
-      border-radius: 15px;
-
-      background:
-        #2563eb;
-
-      color: white;
-
-      cursor: pointer;
-
-      display: flex;
-
-      align-items: center;
-      justify-content: center;
-
-      font-size: 20px;
-
-      transition:
-        all 0.2s ease;
-    }
-
-
-    #sendButton:hover {
-
-      background:
-        #1d4ed8;
-
-      transform:
-        translateY(-1px);
-    }
-
-
-    #sendButton:disabled {
-
-      background:
-        #94a3b8;
-
-      cursor: not-allowed;
-
-      transform: none;
-    }
-
-
-    .footer-note {
-
-      text-align: center;
-
-      font-size: 10px;
-
-      color: #94a3b8;
-
-      margin-top: 8px;
-    }
-
-
-    /* =====================================================
-       LINK
-       ===================================================== */
-
-    .bot-message a {
-
-      color:
-        #2563eb;
-
-      text-decoration:
-        none;
-
-      font-weight: 600;
-    }
-
-
-    .bot-message a:hover {
-
-      text-decoration:
-        underline;
-    }
-
-
-    /* =====================================================
-       ANIMATION
-       ===================================================== */
-
-    @keyframes fadeIn {
-
-      from {
-
-        opacity: 0;
-
-        transform:
-          translateY(5px);
-
-      }
-
-      to {
-
-        opacity: 1;
-
-        transform:
-          translateY(0);
-
-      }
-
-    }
-
-
-    @keyframes typing {
-
-      0%,
-      60%,
-      100% {
-
-        transform:
-          translateY(0);
-
-        opacity: 0.5;
-      }
-
-      30% {
-
-        transform:
-          translateY(-4px);
-
-        opacity: 1;
-      }
-
-    }
-
-
-    /* =====================================================
-       MOBILE
-       ===================================================== */
-
-    @media (max-width: 600px) {
-
-      .chat-wrapper {
-
-        height: 100vh;
-
-        max-height: none;
-
-        border-radius: 0;
-      }
-
-
-      .header {
-
-        padding:
-          16px;
-      }
-
-
-      .logo {
-
-        width: 43px;
-        height: 43px;
-
-        border-radius: 12px;
-
-        font-size: 21px;
-      }
-
-
-      .header-text h1 {
-
-        font-size: 16px;
-      }
-
-
-      .header-text p {
-
-        font-size: 11px;
-      }
-
-
-      .online {
-
-        display: none;
-      }
-
-
-      .chat-area {
-
-        padding:
-          18px 14px;
-      }
-
-
-      .welcome h2 {
-
-        font-size: 19px;
-      }
-
-
-      .message-content {
-
-        max-width: 85%;
-      }
-
-
-      .input-area {
-
-        padding:
-          10px;
-      }
-
-
-      .footer-note {
-
-        display: none;
-      }
-
-    }
-
-  </style>
 </head>
 
 
 <body>
 
 
-<div class="chat-wrapper">
+<div class="chat-container">
 
 
-  <!-- ===================================================
-       HEADER
-       ==================================================== -->
+  <!-- HEADER -->
 
-  <header class="header">
+  <div class="chat-header">
 
     <div class="logo">
       🤖
     </div>
 
-    <div class="header-text">
+    <div>
 
-      <h1>
+      <div class="header-title">
         Asisten SKBT Digital
-      </h1>
+      </div>
 
-      <p>
-        Informasi Layanan SKBT
-      </p>
-
-    </div>
-
-    <div class="online">
-
-      <span class="online-dot"></span>
-
-      Online
+      <div class="header-subtitle">
+        Inspektorat Daerah Kabupaten Aceh Timur
+      </div>
 
     </div>
 
-  </header>
+  </div>
 
 
-  <!-- ===================================================
-       CHAT
-       ==================================================== -->
+  <!-- PESAN -->
 
-  <main
-    id="chatArea"
-    class="chat-area"
+  <div
+    id="chatMessages"
+    class="chat-messages"
   >
 
+    <div class="message bot">
 
-    <!-- WELCOME -->
+      <div class="bubble">
 
-    <div
-      id="welcome"
-      class="welcome"
-    >
+        Halo 👋
 
-      <div class="welcome-icon">
-        🤖
-      </div>
+        Saya adalah
+        <b>Asisten SKBT Digital</b>.
 
-      <h2>
-        Halo! 👋
-      </h2>
-
-      <p>
-        Saya Asisten SKBT Digital.
-        Saya siap membantu memberikan
+        Saya dapat membantu memberikan
         informasi mengenai layanan
         Surat Keterangan Bebas Temuan
-        Inspektorat Daerah Kabupaten
-        Aceh Timur.
-      </p>
+        (SKBT).
 
-    </div>
-
-
-    <!-- PERTANYAAN CEPAT -->
-
-    <div id="quickSection">
-
-      <div class="quick-title">
-        Pertanyaan yang sering ditanyakan:
-      </div>
-
-      <div class="quick-buttons">
-
-        <button
-          class="quick-btn"
-          onclick="quickQuestion('Apa itu SKBT?')"
-        >
-          Apa itu SKBT?
-        </button>
-
-
-        <button
-          class="quick-btn"
-          onclick="quickQuestion('Apa saja persyaratan SKBT?')"
-        >
-          Persyaratan SKBT
-        </button>
-
-
-        <button
-          class="quick-btn"
-          onclick="quickQuestion('Bagaimana cara mengajukan SKBT?')"
-        >
-          Cara pengajuan
-        </button>
-
-
-        <button
-          class="quick-btn"
-          onclick="quickQuestion('Apakah pengajuan SKBT dikenakan biaya?')"
-        >
-          Biaya SKBT
-        </button>
-
-
-        <button
-          class="quick-btn"
-          onclick="quickQuestion('Berapa lama proses SKBT?')"
-        >
-          Waktu pelayanan
-        </button>
+        Silakan tanyakan sesuatu
+        mengenai SKBT.
 
       </div>
 
     </div>
 
-
-    <!-- TEMPAT PESAN -->
-
-    <div id="messages"></div>
+  </div>
 
 
-  </main>
+  <!-- QUICK QUESTIONS -->
+
+  <div class="quick-questions">
+
+    <button
+      type="button"
+      class="quick-btn"
+      onclick="quickQuestion('Apa itu SKBT?')"
+    >
+      Apa itu SKBT?
+    </button>
+
+    <button
+      type="button"
+      class="quick-btn"
+      onclick="quickQuestion('Apa saja persyaratan SKBT?')"
+    >
+      Persyaratan
+    </button>
+
+    <button
+      type="button"
+      class="quick-btn"
+      onclick="quickQuestion('Bagaimana alur pengajuan SKBT?')"
+    >
+      Alur Pengajuan
+    </button>
+
+  </div>
 
 
-  <!-- ===================================================
-       INPUT
-       ==================================================== -->
+  <!-- TYPING -->
 
-  <section class="input-area">
+  <div
+    id="typing"
+    class="typing"
+  >
 
-    <div class="input-wrapper">
+    Asisten sedang mengetik...
 
-      <textarea
-        id="messageInput"
-        placeholder="Ketik pertanyaan Anda..."
-        rows="1"
-      ></textarea>
+  </div>
 
 
-      <button
-        id="sendButton"
-        onclick="sendMessage()"
-        title="Kirim"
-      >
-        ➤
-      </button>
+  <!-- INPUT -->
 
-    </div>
+  <form
+    id="chatForm"
+    class="chat-input-area"
+  >
 
+    <input
+      id="chatInput"
+      class="chat-input"
+      type="text"
+      placeholder="Tulis pertanyaan..."
+      autocomplete="off"
+    >
 
-    <div class="footer-note">
+    <button
+      id="sendButton"
+      class="send-btn"
+      type="submit"
+      title="Kirim"
+    >
+      ➤
+    </button>
 
-      Asisten SKBT Digital memberikan informasi
-      berdasarkan basis pengetahuan layanan SKBT.
-
-    </div>
-
-  </section>
+  </form>
 
 
 </div>
@@ -955,31 +515,26 @@
 
 <script>
 
-
-/* =========================================================
+/* =====================================================
    KONFIGURASI WORKER
-   ========================================================= */
-
-/*
- * GANTI URL DI BAWAH
- * dengan URL Cloudflare Worker Anda.
- *
- * Contoh:
- *
- * https://chatbot-skbt.namauser.workers.dev
- */
+   ===================================================== */
 
 const WORKER_URL =
   "https://quiet-bush-fe39.muhammadhabib348.workers.dev/";
 
 
-/* =========================================================
+/* =====================================================
    ELEMENT
-   ========================================================= */
+   ===================================================== */
 
-const input =
+const chatForm =
   document.getElementById(
-    "messageInput"
+    "chatForm"
+  );
+
+const chatInput =
+  document.getElementById(
+    "chatInput"
   );
 
 const sendButton =
@@ -987,27 +542,335 @@ const sendButton =
     "sendButton"
   );
 
-const messages =
+const chatMessages =
   document.getElementById(
-    "messages"
+    "chatMessages"
   );
 
-const chatArea =
+const typing =
   document.getElementById(
-    "chatArea"
-  );
-
-const quickSection =
-  document.getElementById(
-    "quickSection"
+    "typing"
   );
 
 
-/* =========================================================
+/* =====================================================
+   HISTORY
+   ===================================================== */
+
+let chatHistory = [];
+
+
+/* =====================================================
+   TAMBAH PESAN
+   ===================================================== */
+
+function addMessage(
+  text,
+  sender
+) {
+
+  const message =
+    document.createElement(
+      "div"
+    );
+
+  message.className =
+    "message " +
+    sender;
+
+
+  const bubble =
+    document.createElement(
+      "div"
+    );
+
+  bubble.className =
+    "bubble";
+
+
+  bubble.textContent =
+    text;
+
+
+  message.appendChild(
+    bubble
+  );
+
+
+  chatMessages.appendChild(
+    message
+  );
+
+
+  chatMessages.scrollTop =
+    chatMessages.scrollHeight;
+
+}
+
+
+/* =====================================================
+   QUICK QUESTION
+   ===================================================== */
+
+function quickQuestion(
+  question
+) {
+
+  chatInput.value =
+    question;
+
+  chatInput.focus();
+
+  sendMessage();
+
+}
+
+
+/* =====================================================
+   SUBMIT
+   ===================================================== */
+
+chatForm.addEventListener(
+  "submit",
+  function(event) {
+
+    event.preventDefault();
+
+    sendMessage();
+
+  }
+);
+
+
+/* =====================================================
+   SEND MESSAGE
+   ===================================================== */
+
+async function sendMessage() {
+
+  const message =
+    chatInput.value.trim();
+
+
+  if (!message) {
+
+    chatInput.focus();
+
+    return;
+
+  }
+
+
+  /* tampilkan pesan user */
+
+  addMessage(
+    message,
+    "user"
+  );
+
+
+  /* kosongkan input */
+
+  chatInput.value = "";
+
+
+  /* disable */
+
+  sendButton.disabled =
+    true;
+
+  chatInput.disabled =
+    true;
+
+
+  typing.style.display =
+    "block";
+
+
+  try {
+
+    console.log(
+      "Mengirim pertanyaan:",
+      message
+    );
+
+
+    const response =
+      await fetch(
+        WORKER_URL,
+        {
+
+          method:
+            "POST",
+
+          headers: {
+
+            "Content-Type":
+              "application/json"
+
+          },
+
+          body:
+            JSON.stringify({
+
+              message:
+                message,
+
+              history:
+                chatHistory
+
+            })
+
+        }
+      );
+
+
+    console.log(
+      "HTTP STATUS:",
+      response.status
+    );
+
+
+    const data =
+      await response.json();
+
+
+    console.log(
+      "RESPONSE WORKER:",
+      data
+    );
+
+
+    /* =========================================
+       ERROR DARI WORKER
+       ========================================= */
+
+    if (
+      !response.ok ||
+      !data.success
+    ) {
+
+      const detail =
+        data.detail ||
+        data.error ||
+        "Gagal mendapatkan jawaban.";
+
+      throw new Error(
+        detail
+      );
+
+    }
+
+
+    /* =========================================
+       JAWABAN
+       ========================================= */
+
+    const answer =
+      data.answer;
+
+
+    if (!answer) {
+
+      throw new Error(
+        "Jawaban dari AI kosong."
+      );
+
+    }
+
+
+    addMessage(
+      answer,
+      "bot"
+    );
+
+
+    /* =========================================
+       SIMPAN HISTORY
+       ========================================= */
+
+    chatHistory.push({
+
+      role:
+        "user",
+
+      content:
+        message
+
+    });
+
+
+    chatHistory.push({
+
+      role:
+        "assistant",
+
+      content:
+        answer
+
+    });
+
+
+    /* batasi history */
+
+    if (
+      chatHistory.length > 10
+    ) {
+
+      chatHistory =
+        chatHistory.slice(-10);
+
+    }
+
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "ERROR CHATBOT:",
+      error
+    );
+
+
+    addMessage(
+
+      "Maaf, terjadi kesalahan saat " +
+      "menghubungi Asisten SKBT Digital.\n\n" +
+      error.message,
+
+      "bot"
+
+    );
+
+  }
+
+
+  finally {
+
+    typing.style.display =
+      "none";
+
+
+    sendButton.disabled =
+      false;
+
+    chatInput.disabled =
+      false;
+
+
+    chatInput.focus();
+
+  }
+
+}
+
+
+/* =====================================================
    ENTER
-   ========================================================= */
+   ===================================================== */
 
-input.addEventListener(
+chatInput.addEventListener(
   "keydown",
   function(event) {
 
@@ -1024,511 +887,6 @@ input.addEventListener(
 
   }
 );
-
-
-/* =========================================================
-   AUTO RESIZE
-   ========================================================= */
-
-input.addEventListener(
-  "input",
-  function() {
-
-    this.style.height =
-      "auto";
-
-    this.style.height =
-      Math.min(
-        this.scrollHeight,
-        130
-      ) + "px";
-
-  }
-);
-
-
-/* =========================================================
-   QUICK QUESTION
-   ========================================================= */
-
-function quickQuestion(
-  question
-) {
-
-  input.value =
-    question;
-
-  sendMessage();
-
-}
-
-
-/* =========================================================
-   WAKTU
-   ========================================================= */
-
-function getTime() {
-
-  return new Date()
-    .toLocaleTimeString(
-      "id-ID",
-      {
-        hour:
-          "2-digit",
-
-        minute:
-          "2-digit"
-      }
-    );
-
-}
-
-
-/* =========================================================
-   ESCAPE HTML
-   ========================================================= */
-
-function escapeHtml(
-  text
-) {
-
-  const div =
-    document.createElement(
-      "div"
-    );
-
-  div.textContent =
-    text;
-
-  return div.innerHTML;
-
-}
-
-
-/* =========================================================
-   FORMAT JAWABAN BOT
-   ========================================================= */
-
-function formatBotAnswer(
-  text
-) {
-
-  let result =
-    escapeHtml(text);
-
-
-  /*
-   * Link HTTPS
-   */
-
-  result =
-    result.replace(
-      /(https?:\/\/[^\s<]+)/g,
-      function(url) {
-
-        return `
-          <a
-            href="${url}"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            ${url}
-          </a>
-        `;
-
-      }
-    );
-
-
-  return result;
-
-}
-
-
-/* =========================================================
-   TAMBAH PESAN USER
-   ========================================================= */
-
-function addUserMessage(
-  text
-) {
-
-  const row =
-    document.createElement(
-      "div"
-    );
-
-  row.className =
-    "message-row user";
-
-
-  row.innerHTML = `
-
-    <div class="message-content">
-
-      <div class="message user-message">
-
-        ${escapeHtml(text)}
-
-      </div>
-
-      <div class="time">
-
-        ${getTime()}
-
-      </div>
-
-    </div>
-
-    <div class="avatar user-avatar">
-      👤
-    </div>
-
-  `;
-
-
-  messages.appendChild(
-    row
-  );
-
-  scrollBottom();
-
-}
-
-
-/* =========================================================
-   TAMBAH PESAN BOT
-   ========================================================= */
-
-function addBotMessage(
-  text
-) {
-
-  const row =
-    document.createElement(
-      "div"
-    );
-
-  row.className =
-    "message-row";
-
-
-  row.innerHTML = `
-
-    <div class="avatar bot-avatar">
-      🤖
-    </div>
-
-    <div class="message-content">
-
-      <div class="message bot-message">
-
-        ${formatBotAnswer(text)}
-
-      </div>
-
-      <div class="time">
-
-        ${getTime()}
-
-      </div>
-
-    </div>
-
-  `;
-
-
-  messages.appendChild(
-    row
-  );
-
-  scrollBottom();
-
-}
-
-
-/* =========================================================
-   TYPING
-   ========================================================= */
-
-function showTyping() {
-
-  const row =
-    document.createElement(
-      "div"
-    );
-
-  row.id =
-    "typingIndicator";
-
-  row.className =
-    "message-row";
-
-
-  row.innerHTML = `
-
-    <div class="avatar bot-avatar">
-      🤖
-    </div>
-
-    <div class="message-content">
-
-      <div class="message bot-message typing">
-
-        <span></span>
-        <span></span>
-        <span></span>
-
-      </div>
-
-    </div>
-
-  `;
-
-
-  messages.appendChild(
-    row
-  );
-
-  scrollBottom();
-
-}
-
-
-/* =========================================================
-   HIDE TYPING
-   ========================================================= */
-
-function hideTyping() {
-
-  const typing =
-    document.getElementById(
-      "typingIndicator"
-    );
-
-  if (typing) {
-
-    typing.remove();
-
-  }
-
-}
-
-
-/* =========================================================
-   SCROLL
-   ========================================================= */
-
-function scrollBottom() {
-
-  setTimeout(
-    function() {
-
-      chatArea.scrollTop =
-        chatArea.scrollHeight;
-
-    },
-    50
-  );
-
-}
-
-
-/* =========================================================
-   KIRIM PESAN
-   ========================================================= */
-
-async function sendMessage() {
-
-  const text =
-    input.value.trim();
-
-
-  if (!text) {
-
-    return;
-
-  }
-
-
-  /*
-   * Jangan kirim ketika sedang proses
-   */
-
-  if (
-    sendButton.disabled
-  ) {
-
-    return;
-
-  }
-
-
-  /*
-   * Tampilkan pertanyaan user
-   */
-
-  addUserMessage(
-    text
-  );
-
-
-  /*
-   * Bersihkan input
-   */
-
-  input.value =
-    "";
-
-  input.style.height =
-    "48px";
-
-
-  /*
-   * Sembunyikan quick question
-   */
-
-  quickSection.style.display =
-    "none";
-
-
-  /*
-   * Loading
-   */
-
-  sendButton.disabled =
-    true;
-
-  showTyping();
-
-
-  try {
-
-    const response = await fetch(
-  "https://quiet-bush-fe39.muhammadhabib348.workers.dev/",
-  {
-    method: "POST",
-
-    headers: {
-      "Content-Type": "application/json"
-    },
-
-    body: JSON.stringify({
-      message: "Apa itu SKBT?"
-    })
-  }
-);
-
-const data = await response.json();
-
-console.log(data);
-
-
-    /*
-     * Ambil JSON
-     */
-
-    const data =
-      await response.json();
-
-
-    console.log(
-      "RESPON WORKER:",
-      data
-    );
-
-
-    hideTyping();
-
-
-    /*
-     * Jika berhasil
-     */
-
-    if (
-      data.success &&
-      data.answer
-    ) {
-
-      addBotMessage(
-        data.answer
-      );
-
-    }
-
-    else {
-
-      addBotMessage(
-
-        "Maaf, terjadi kesalahan saat " +
-        "menghubungi Asisten SKBT Digital.\n\n" +
-
-        (
-          data.error ||
-          "Jawaban tidak tersedia."
-        )
-
-      );
-
-    }
-
-
-  }
-
-  catch (error) {
-
-    console.error(
-      "ERROR:",
-      error
-    );
-
-
-    hideTyping();
-
-
-    addBotMessage(
-
-      "Maaf, Asisten SKBT Digital " +
-      "tidak dapat terhubung ke server saat ini.\n\n" +
-
-      "Silakan coba beberapa saat lagi."
-
-    );
-
-  }
-
-
-  finally {
-
-    sendButton.disabled =
-      false;
-
-    input.focus();
-
-  }
-
-}
-
-
-/* =========================================================
-   PESAN AWAL
-   ========================================================= */
-
-setTimeout(
-  function() {
-
-    addBotMessage(
-
-      "Silakan tanyakan apa saja mengenai " +
-      "layanan SKBT, seperti persyaratan, " +
-      "cara pengajuan, atau informasi layanan lainnya."
-
-    );
-
-  },
-  500
-);
-
 
 </script>
 
