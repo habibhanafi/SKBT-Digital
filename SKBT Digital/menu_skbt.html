@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Layanan Surat Keterangan Bebas Temuan</title>
+
+  <!-- Font Awesome untuk ikon -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 650px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .header h1 {
+      margin: 0 0 8px;
+      font-size: 26px;
+      color: #123b68;
+    }
+
+    .header p {
+      margin: 0;
+      font-size: 14px;
+      color: #64778b;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .menu-card {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      min-height: 86px;
+      padding: 18px 22px;
+      text-decoration: none;
+
+      /* Biru tua */
+      background: #191970;
+      color: #ffffff;
+
+      border: 1px solid #0a4c8e;
+      border-radius: 14px;
+      box-shadow: 0 6px 18px rgba(6, 59, 115, 0.20);
+
+      transition: all 0.22s ease;
+    }
+
+    .menu-card:hover {
+      background: #7FFF00;
+	  color:#063b73;
+	  border: 0px; 
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(6, 59, 115, 0.28);
+    }
+
+    .icon {
+      width: 52px;
+      height: 52px;
+      min-width: 52px;
+      border-radius: 12px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background: rgba(255, 255, 255, 0.14);
+      color: #ffffff;
+      font-size: 24px;
+    }
+
+    .content {
+      flex: 1;
+    }
+
+    .menu-title {
+      display: block;
+      font-size: 17px;
+      line-height: 1.35;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 5px;
+    }
+
+    .menu-subtitle {
+      display: block;
+      font-size: 14px;
+      line-height: 1.45;
+      color: rgba(255, 255, 255, 0.88);
+    }
+
+    .arrow {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 17px;
+      margin-left: auto;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 22px;
+      font-size: 12px;
+      color: #8190a0;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 20px 12px;
+      }
+
+      .header h1 {
+        font-size: 22px;
+      }
+
+      .menu-card {
+        gap: 14px;
+        padding: 16px;
+      }
+
+      .icon {
+        width: 46px;
+        height: 46px;
+        min-width: 46px;
+        font-size: 21px;
+      }
+
+      .menu-title {
+        font-size: 15px;
+      }
+
+      .menu-subtitle {
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="container">
+
+    <header class="header">
+	<img width="100%" src="Ungu Modern Promosi Bisnis E-Learning Twitter Header (1).png"><br><br>
+      <h1>Silakan pilih layanan yang ingin Anda gunakan</h1>
+    </header>
+
+    <nav class="menu">
+
+      <!-- 1. Ajukan Permohonan -->
+      <a class="menu-card" href="ajukan-permohonan.html">
+        <div class="icon">
+          <i class="fa-solid fa-file-circle-plus"></i>
+        </div>
+
+        <div class="content">
+          <span class="menu-title">Ajukan Permohonan</span>
+          <span class="menu-subtitle">
+            Surat Keterangan Bebas Temuan
+          </span>
+        </div>
+
+        <div class="arrow">
+          <i class="fa-solid fa-chevron-right"></i>
+        </div>
+      </a>
+
+
+      <!-- 2. Cek Status -->
+      <a class="menu-card" href="cek-status.html">
+        <div class="icon">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+
+        <div class="content">
+          <span class="menu-title">Cek Status Permohonan</span>
+          <span class="menu-subtitle">
+            Surat Keterangan Bebas Temuan
+          </span>
+        </div>
+
+        <div class="arrow">
+          <i class="fa-solid fa-chevron-right"></i>
+        </div>
+      </a>
+
+
+      <!-- 3. Syarat dan Prosedur -->
+      <a class="menu-card" href="syarat-prosedur.html">
+        <div class="icon">
+          <i class="fa-solid fa-list-check"></i>
+        </div>
+
+        <div class="content">
+          <span class="menu-title">Syarat dan Prosedur Pengajuan</span>
+          <span class="menu-subtitle">
+            Surat Keterangan Bebas Temuan
+          </span>
+        </div>
+
+        <div class="arrow">
+          <i class="fa-solid fa-chevron-right"></i>
+        </div>
+      </a>
+
+
+      <!-- 4. Asisten AI -->
+      <a class="menu-card" href="asisten-ai.html">
+        <div class="icon">
+          <i class="fa-solid fa-robot"></i>
+        </div>
+
+        <div class="content">
+          <span class="menu-title">Layanan Asisten Interaktif Berbasis AI</span>
+          <span class="menu-subtitle">
+            Respon Jawaban Langsung dan Otomatis 24 Jam
+          </span>
+        </div>
+
+        <div class="arrow">
+          <i class="fa-solid fa-chevron-right"></i>
+        </div>
+      </a>
+
+
+      <!-- 5. Kontak Petugas -->
+      <a class="menu-card" href="kontak-petugas.html">
+        <div class="icon">
+          <i class="fa-solid fa-headset"></i>
+        </div>
+
+        <div class="content">
+          <span class="menu-title">
+            Kontak Petugas Surat Keterangan Bebas Temuan
+          </span>
+          <span class="menu-subtitle">
+            (Di Jawab Saat Jam Kerja)
+          </span>
+        </div>
+
+        <div class="arrow">
+          <i class="fa-solid fa-chevron-right"></i>
+        </div>
+      </a>
+
+    </nav>
+
+    <footer class="footer">
+      Layanan Surat Keterangan Bebas Temuan
+    </footer>
+
+  </main>
+
+</body>
+</html>
