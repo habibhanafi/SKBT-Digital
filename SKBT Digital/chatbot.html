@@ -861,37 +861,134 @@ let chatHistory = [];
    TAMBAH PESAN
    ========================================================= */
 
-function addMessage(
-    text,
-    sender
-) {
+function addMessage(text, sender) {
 
     const message =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
     message.className =
         "message " + sender;
 
 
     const bubble =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
     bubble.className =
         "bubble";
 
 
     /*
-     * Menggunakan textContent agar
-     * jawaban AI tidak dapat menyisipkan
-     * HTML/JavaScript ke halaman.
+     * Pecah teks berdasarkan Markdown link:
+     *
+     * [Teks Link](https://alamat.com)
      */
 
-    bubble.textContent =
-        text;
+    const linkRegex =
+        /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
+
+
+    let lastIndex = 0;
+
+    let match;
+
+
+    while (
+        (match = linkRegex.exec(text)) !== null
+    ) {
+
+        /*
+         * Teks sebelum link
+         */
+
+        const beforeText =
+            text.substring(
+                lastIndex,
+                match.index
+            );
+
+
+        if (beforeText) {
+
+            bubble.appendChild(
+                document.createTextNode(
+                    beforeText
+                )
+            );
+
+        }
+
+
+        /*
+         * Buat link
+         */
+
+        const link =
+            document.createElement("a");
+
+
+        link.href =
+            match[2];
+
+
+        link.textContent =
+            match[1];
+
+
+        link.target =
+            "_blank";
+
+
+        link.rel =
+            "noopener noreferrer";
+
+
+        link.style.color =
+            "#1565c0";
+
+
+        link.style.fontWeight =
+            "bold";
+
+
+        link.style.textDecoration =
+            "underline";
+
+
+        /*
+         * Tambahkan link
+         */
+
+        bubble.appendChild(
+            link
+        );
+
+
+        lastIndex =
+            match.index +
+            match[0].length;
+
+    }
+
+
+    /*
+     * Teks setelah link terakhir
+     */
+
+    const remainingText =
+        text.substring(
+            lastIndex
+        );
+
+
+    if (remainingText) {
+
+        bubble.appendChild(
+            document.createTextNode(
+                remainingText
+            )
+        );
+
+    }
 
 
     message.appendChild(
@@ -905,7 +1002,7 @@ function addMessage(
 
 
     /*
-     * Scroll hanya pada area chat.
+     * Scroll hanya area chat
      */
 
     setTimeout(
