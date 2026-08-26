@@ -878,9 +878,9 @@ function addMessage(text, sender) {
 
 
     /*
-     * Pecah teks berdasarkan Markdown link:
+     * Mendeteksi Markdown link:
      *
-     * [Teks Link](https://alamat.com)
+     * [Nama Link](https://alamat.com)
      */
 
     const linkRegex =
@@ -919,7 +919,7 @@ function addMessage(text, sender) {
 
 
         /*
-         * Buat link
+         * Buat elemen link
          */
 
         const link =
@@ -942,21 +942,9 @@ function addMessage(text, sender) {
             "noopener noreferrer";
 
 
-        link.style.color =
-            "#1565c0";
+        link.className =
+            "chat-link";
 
-
-        link.style.fontWeight =
-            "bold";
-
-
-        link.style.textDecoration =
-            "underline";
-
-
-        /*
-         * Tambahkan link
-         */
 
         bubble.appendChild(
             link
@@ -1000,10 +988,6 @@ function addMessage(text, sender) {
         message
     );
 
-
-    /*
-     * Scroll hanya area chat
-     */
 
     setTimeout(
         function() {
