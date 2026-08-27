@@ -171,7 +171,7 @@ if (keperluan) {
 
       death =
         this.value ===
-        "Pemberhentian Karena Meninggal Dunia";
+        "pemberhentian dengan hormat sebagai Pegawai Negeri Sipil (PNS) karena meninggal dunia.";
 
 
       const heirSection =
