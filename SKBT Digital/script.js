@@ -23,6 +23,21 @@ let isSubmitting = false;
 
 
 /* =========================================================
+   STATUS PENGIRIMAN
+   postMessage tetap digunakan jika tersedia.
+   iframe.onload menjadi fallback.
+   ========================================================= */
+
+let submissionState = {
+  active: false,
+  responseReceived: false,
+  fallbackTimer: null,
+  timeoutTimer: null,
+  iframe: null
+};
+
+
+/* =========================================================
    DAFTAR DOKUMEN
    ========================================================= */
 
@@ -563,7 +578,9 @@ function show() {
 function val(id) {
 
   const element =
-    document.getElementById(id);
+    document.getElementById(
+      id
+    );
 
 
   return element
@@ -916,15 +933,13 @@ async function submitToGoogle() {
       val("email"),
 
     files:
-      JSON.stringify(
-        files
-      )
+      JSON.stringify(files)
 
   };
 
 
   /* -------------------------------------------------------
-     IFRAME
+     IFRAME RESPONSE
      ------------------------------------------------------- */
 
   let iframe =
@@ -949,6 +964,12 @@ async function submitToGoogle() {
       "submitFrame";
 
 
+    iframe.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
+
     iframe.style.display =
       "none";
 
@@ -960,30 +981,187 @@ async function submitToGoogle() {
   }
 
 
+  submissionState.active =
+    true;
+
+
+  submissionState.responseReceived =
+    false;
+
+
+  submissionState.iframe =
+    iframe;
+
+
+  if (
+    submissionState.fallbackTimer
+  ) {
+
+    clearTimeout(
+      submissionState.fallbackTimer
+    );
+
+  }
+
+
+  if (
+    submissionState.timeoutTimer
+  ) {
+
+    clearTimeout(
+      submissionState.timeoutTimer
+    );
+
+  }
+
+
+  /* -------------------------------------------------------
+     FALLBACK
+
+     postMessage tetap menjadi mekanisme utama.
+
+     Jika postMessage tidak diterima karena halaman
+     berada di dalam nested iframe, iframe.onload
+     digunakan sebagai fallback tampilan.
+     ------------------------------------------------------- */
+
+  iframe.onload =
+    function() {
+
+      if (
+        !submissionState.active
+      ) {
+
+        return;
+
+      }
+
+
+      console.log(
+        "[SKBT] Response iframe selesai dimuat."
+      );
+
+
+      if (
+        submissionState.fallbackTimer
+      ) {
+
+        clearTimeout(
+          submissionState.fallbackTimer
+        );
+
+      }
+
+
+      submissionState.fallbackTimer =
+        setTimeout(
+
+          function() {
+
+            if (
+              !submissionState.active ||
+              submissionState.responseReceived
+            ) {
+
+              return;
+
+            }
+
+
+            console.warn(
+              "[SKBT] postMessage tidak diterima. Menggunakan fallback iframe."
+            );
+
+
+            showSuccessFallback();
+
+          },
+
+          800
+
+        );
+
+    };
+
+
+  /* -------------------------------------------------------
+     TIMEOUT KESELAMATAN
+     ------------------------------------------------------- */
+
+  submissionState.timeoutTimer =
+    setTimeout(
+
+      function() {
+
+        if (
+          !submissionState.active ||
+          submissionState.responseReceived
+        ) {
+
+          return;
+
+        }
+
+
+        console.error(
+          "[SKBT] Timeout menunggu response Google Apps Script."
+        );
+
+
+        submissionState.active =
+          false;
+
+
+        hideSubmitLoading();
+
+
+        resetSubmitButton();
+
+
+        alert(
+          "Server tidak memberikan respons dalam waktu yang ditentukan. " +
+          "Periksa koneksi internet. Jika data sudah masuk Spreadsheet, " +
+          "jangan kirim ulang sebelum memastikan statusnya."
+        );
+
+
+      },
+
+      45000
+
+    );
+
+
   /* -------------------------------------------------------
      FORM POST
      ------------------------------------------------------- */
 
-  const form =
+  const postForm =
     document.createElement(
       "form"
     );
 
 
-  form.method =
+  postForm.method =
     "POST";
 
 
-  form.action =
+  postForm.action =
     GOOGLE_SCRIPT_URL;
 
 
-  form.target =
+  postForm.target =
     "submitFrame";
 
 
-  form.style.display =
+  postForm.style.display =
     "none";
+
+
+  postForm.setAttribute(
+    "aria-hidden",
+    "true"
+  );
 
 
   Object.keys(payload)
@@ -1008,7 +1186,7 @@ async function submitToGoogle() {
           payload[key];
 
 
-        form.appendChild(
+        postForm.appendChild(
           input
         );
 
@@ -1017,34 +1195,42 @@ async function submitToGoogle() {
 
 
   document.body.appendChild(
-    form
+    postForm
   );
 
 
-  /* -------------------------------------------------------
-     LOADING
-     ------------------------------------------------------- */
-
-  const sending =
-    document.getElementById(
-      "sending"
-    );
-
-
-  if (sending) {
-
-    sending.classList.add(
-      "show"
-    );
-
-  }
+  console.log(
+    "[SKBT] Mengirim permohonan ke Google Apps Script..."
+  );
 
 
   /* -------------------------------------------------------
      SUBMIT
      ------------------------------------------------------- */
 
-  form.submit();
+  postForm.submit();
+
+
+  /* -------------------------------------------------------
+     HAPUS FORM KIRIM
+     ------------------------------------------------------- */
+
+  setTimeout(
+    function() {
+
+      if (
+        postForm.parentNode
+      ) {
+
+        postForm.parentNode.removeChild(
+          postForm
+        );
+
+      }
+
+    },
+    1000
+  );
 
 }
 
@@ -1231,11 +1417,13 @@ function hideSubmitLoading() {
    ========================================================= */
 
 window.addEventListener(
+
   "message",
+
   function(event) {
 
     console.log(
-      "Pesan diterima:",
+      "[SKBT] Pesan diterima:",
       event.data
     );
 
@@ -1266,147 +1454,227 @@ window.addEventListener(
     }
 
 
-    /* -----------------------------------------------------
-       HILANGKAN LOADING
-       ----------------------------------------------------- */
-
-    const sending =
-      document.getElementById(
-        "sending"
-      );
+    submissionState.responseReceived =
+      true;
 
 
-    if (sending) {
+    submissionState.active =
+      false;
 
-      sending.classList.remove(
-        "show"
-      );
-
-    }
-
-
-    /* -----------------------------------------------------
-       JIKA GAGAL
-       ----------------------------------------------------- */
 
     if (
-      data.success === false
+      submissionState.fallbackTimer
     ) {
 
-      resetSubmitButton();
-
-      hideSubmitLoading();
-
-
-      alert(
-        data.message ||
-        "Permohonan gagal diproses."
-      );
-
-
-      return;
-
-    }
-
-
-    /* -----------------------------------------------------
-       NOMOR PERMOHONAN
-       ----------------------------------------------------- */
-
-    const number =
-      document.getElementById(
-        "number"
-      );
-
-
-    if (number) {
-
-      number.textContent =
-        data.nomor ||
-        "-";
-
-    }
-
-
-    /* -----------------------------------------------------
-       SEMBUNYIKAN FORM
-       ----------------------------------------------------- */
-
-    const form =
-      document.getElementById(
-        "form"
-      );
-
-
-    if (form) {
-
-      form.style.display =
-        "none";
-
-    }
-
-
-    /* -----------------------------------------------------
-       SEMBUNYIKAN PROGRESS
-       ----------------------------------------------------- */
-
-    const progress =
-      document.querySelector(
-        ".progress"
-      );
-
-
-    if (progress) {
-
-      progress.style.display =
-        "none";
-
-    }
-
-
-    /* -----------------------------------------------------
-       TAMPILKAN SUKSES
-       ----------------------------------------------------- */
-
-    const success =
-      document.getElementById(
-        "success"
-      );
-
-
-    if (success) {
-
-      success.classList.add(
-        "show"
+      clearTimeout(
+        submissionState.fallbackTimer
       );
 
     }
 
 
-    /*
-     * JANGAN mengaktifkan kembali tombol
-     * setelah berhasil.
-     *
-     * Ini mencegah pemohon mengirim
-     * permohonan kedua.
-     */
+    if (
+      submissionState.timeoutTimer
+    ) {
 
-    hideSubmitLoading();
+      clearTimeout(
+        submissionState.timeoutTimer
+      );
+
+    }
 
 
-    window.scrollTo({
-
-      top: 0,
-
-      behavior: "smooth"
-
-    });
+    handleSubmissionResponse(
+      data
+    );
 
   },
 
   false
 
 );
+
+
+/* =========================================================
+   PROSES RESPONSE TERPUSAT
+   ========================================================= */
+
+function handleSubmissionResponse(
+  data
+) {
+
+  hideSubmitLoading();
+
+
+  /* -------------------------------------------------------
+     JIKA GAGAL
+     ------------------------------------------------------- */
+
+  if (
+    data.success === false
+  ) {
+
+    resetSubmitButton();
+
+
+    alert(
+      data.message ||
+      "Permohonan gagal diproses."
+    );
+
+
+    return;
+
+  }
+
+
+  /* -------------------------------------------------------
+     NOMOR PERMOHONAN
+     ------------------------------------------------------- */
+
+  const number =
+    document.getElementById(
+      "number"
+    );
+
+
+  if (number) {
+
+    number.textContent =
+      data.nomor ||
+      "-";
+
+  }
+
+
+  showSuccessScreen();
+
+}
+
+
+/* =========================================================
+   FALLBACK JIKA postMessage TIDAK SAMPAI
+
+   Browser tidak mengizinkan parent membaca isi iframe
+   Google Apps Script yang berbeda origin.
+
+   Oleh karena itu fallback ini hanya digunakan setelah
+   iframe response selesai dimuat.
+
+   Nomor permohonan tidak dapat dibaca melalui fallback.
+   ========================================================= */
+
+function showSuccessFallback() {
+
+  if (
+    !submissionState.active
+  ) {
+
+    return;
+
+  }
+
+
+  submissionState.active =
+    false;
+
+
+  if (
+    submissionState.timeoutTimer
+  ) {
+
+    clearTimeout(
+      submissionState.timeoutTimer
+    );
+
+  }
+
+
+  console.warn(
+    "[SKBT] Menggunakan fallback iframe."
+  );
+
+
+  const number =
+    document.getElementById(
+      "number"
+    );
+
+
+  if (number) {
+
+    number.textContent =
+      "Berhasil diproses";
+
+  }
+
+
+  showSuccessScreen();
+
+}
+
+
+/* =========================================================
+   TAMPILKAN HALAMAN SUKSES
+   ========================================================= */
+
+function showSuccessScreen() {
+
+  const form =
+    document.getElementById(
+      "form"
+    );
+
+
+  if (form) {
+
+    form.style.display =
+      "none";
+
+  }
+
+
+  const progress =
+    document.querySelector(
+      ".progress"
+    );
+
+
+  if (progress) {
+
+    progress.style.display =
+      "none";
+
+  }
+
+
+  const success =
+    document.getElementById(
+      "success"
+    );
+
+
+  if (success) {
+
+    success.classList.add(
+      "show"
+    );
+
+  }
+
+
+  hideSubmitLoading();
+
+
+  window.scrollTo({
+
+    top: 0,
+
+    behavior: "smooth"
+
+  });
+
+}
 
 
 /* =========================================================
@@ -1422,7 +1690,9 @@ const mainForm =
 if (mainForm) {
 
   mainForm.addEventListener(
+
     "submit",
+
     async function(event) {
 
       event.preventDefault();
@@ -1506,7 +1776,7 @@ if (mainForm) {
 
 
       /* =================================================
-         KUNCI TOMBOL SEBELUM PROSES FILE
+         KUNCI TOMBOL
          ================================================= */
 
       lockSubmitButton();
@@ -1537,6 +1807,10 @@ if (mainForm) {
         );
 
 
+        submissionState.active =
+          false;
+
+
         hideSubmitLoading();
 
 
@@ -1544,15 +1818,20 @@ if (mainForm) {
 
 
         alert(
+
           error &&
           error.message
+
             ? error.message
+
             : "Terjadi kesalahan saat mengirim permohonan."
+
         );
 
       }
 
     }
+
   );
 
 }
@@ -1592,9 +1871,11 @@ function escapeHTML(value) {
     );
 
 }
+
+
 /* =========================================================
    MEMBACA DATA DARI CHATBOT
-========================================================= */
+   ========================================================= */
 
 function loadChatbotData() {
 
@@ -1614,7 +1895,9 @@ function loadChatbotData() {
 
     if (
       !hash ||
-      !hash.startsWith("#chatdata=")
+      !hash.startsWith(
+        "#chatdata="
+      )
     ) {
 
       return;
@@ -1647,7 +1930,9 @@ function loadChatbotData() {
      */
 
     const data =
-      JSON.parse(json);
+      JSON.parse(
+        json
+      );
 
 
     console.log(
@@ -1665,40 +1950,48 @@ function loadChatbotData() {
       data.keperluan
     );
 
+
     setFieldValue(
       "nama",
       data.nama
     );
+
 
     setFieldValue(
       "nip",
       data.nip
     );
 
+
     setFieldValue(
       "pangkat",
       data.pangkat
     );
+
 
     setFieldValue(
       "jabatan",
       data.jabatan
     );
 
+
     setFieldValue(
       "instansi",
       data.instansi
     );
+
 
     setFieldValue(
       "unit",
       data.unit
     );
 
+
     setFieldValue(
       "wa",
       data.wa
     );
+
 
     setFieldValue(
       "email",
@@ -1708,12 +2001,6 @@ function loadChatbotData() {
 
     /*
      * Trigger perubahan keperluan
-     *
-     * Ini penting agar jika:
-     *
-     * Pemberhentian Karena Meninggal Dunia
-     *
-     * maka dokumen ahli waris muncul.
      */
 
     const keperluan =
@@ -1725,12 +2012,14 @@ function loadChatbotData() {
     if (keperluan) {
 
       keperluan.dispatchEvent(
+
         new Event(
           "change",
           {
-            bubbles:true
+            bubbles: true
           }
         )
+
       );
 
     }
@@ -1738,15 +2027,17 @@ function loadChatbotData() {
 
     /*
      * Hapus data dari URL
-     *
-     * Setelah dibaca, fragment dihilangkan.
      */
 
     history.replaceState(
+
       null,
+
       "",
+
       window.location.pathname +
       window.location.search
+
     );
 
 
@@ -1755,7 +2046,6 @@ function loadChatbotData() {
      */
 
     showChatbotNotice();
-
 
   }
 
@@ -1773,15 +2063,17 @@ function loadChatbotData() {
 
 /* =========================================================
    ISI FIELD
-========================================================= */
+   ========================================================= */
 
 function setFieldValue(
   id,
   value
-){
+) {
 
   const element =
-    document.getElementById(id);
+    document.getElementById(
+      id
+    );
 
 
   if (!element) {
@@ -1801,26 +2093,34 @@ function setFieldValue(
 
 
   /*
-   * Trigger input/change
+   * Trigger input
    */
 
   element.dispatchEvent(
+
     new Event(
       "input",
       {
-        bubbles:true
+        bubbles: true
       }
     )
+
   );
 
 
+  /*
+   * Trigger change
+   */
+
   element.dispatchEvent(
+
     new Event(
       "change",
       {
-        bubbles:true
+        bubbles: true
       }
     )
+
   );
 
 }
@@ -1828,9 +2128,9 @@ function setFieldValue(
 
 /* =========================================================
    NOTIFIKASI DATA CHATBOT
-========================================================= */
+   ========================================================= */
 
-function showChatbotNotice(){
+function showChatbotNotice() {
 
   /*
    * Jangan membuat elemen jika
@@ -1859,22 +2159,39 @@ function showChatbotNotice(){
 
 
   notice.style.cssText = `
+
     background:#e8f5e9;
+
     border:1px solid #81c784;
+
     color:#1b5e20;
+
     padding:14px 16px;
+
     margin:15px 0;
+
     border-radius:10px;
+
     font-size:14px;
+
     line-height:1.5;
+
   `;
 
 
   notice.innerHTML = `
-    <strong>🤖 Data dari Asisten SKBT</strong><br>
+
+    <strong>
+      🤖 Data dari Asisten SKBT
+    </strong>
+
+    <br>
+
     Data pemohon telah diisi otomatis dari percakapan
     dengan Asisten SKBT Digital.
+
     Silakan periksa kembali data sebelum melanjutkan.
+
   `;
 
 
@@ -1901,13 +2218,16 @@ function showChatbotNotice(){
 
 /* =========================================================
    JALANKAN SAAT HALAMAN SELESAI DIMUAT
-========================================================= */
+   ========================================================= */
 
 document.addEventListener(
+
   "DOMContentLoaded",
-  function(){
+
+  function() {
 
     loadChatbotData();
 
   }
+
 );
