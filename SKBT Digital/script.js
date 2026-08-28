@@ -1152,6 +1152,121 @@ async function checkApplicationStatus(
 
 }
 
+/* =========================================================
+   MENUNGGU NOMOR PERMOHONAN
+   ========================================================= */
+
+async function waitForApplicationNumber(
+  transactionId
+) {
+
+  const maxAttempts =
+    30;
+
+  const interval =
+    2000;
+
+
+  for (
+    let attempt = 1;
+    attempt <= maxAttempts;
+    attempt++
+  ) {
+
+    console.log(
+      "[SKBT] Cek status " +
+      attempt +
+      "/" +
+      maxAttempts
+    );
+
+
+    const result =
+      await checkApplicationStatus(
+        transactionId
+      );
+
+
+    if (
+      result &&
+      result.success === true &&
+      result.found === true &&
+      result.nomor
+    ) {
+
+      console.log(
+        "[SKBT] NOMOR DITEMUKAN:",
+        result.nomor
+      );
+
+
+      handleSubmissionResponse({
+
+        success:
+          true,
+
+        nomor:
+          result.nomor,
+
+        transactionId:
+          transactionId,
+
+        message:
+          "Permohonan berhasil disimpan."
+
+      });
+
+
+      return;
+
+    }
+
+
+    /*
+     * Tunggu 2 detik
+     */
+
+    if (
+      attempt <
+      maxAttempts
+    ) {
+
+      await new Promise(
+        function(resolve) {
+
+          setTimeout(
+            resolve,
+            interval
+          );
+
+        }
+      );
+
+    }
+
+  }
+
+
+  /* =====================================================
+     GAGAL SETELAH 60 DETIK
+     ===================================================== */
+
+  console.error(
+    "[SKBT] Nomor tidak ditemukan setelah 60 detik."
+  );
+
+
+  hideSubmitLoading();
+
+  resetSubmitButton();
+
+
+  alert(
+    "Permohonan sedang diproses, tetapi nomor permohonan belum dapat ditampilkan. " +
+    "Silakan jangan mengirim ulang. Periksa email atau menu Cek Status."
+  );
+
+}
 
 /* =========================================================
    KUNCI TOMBOL SUBMIT
