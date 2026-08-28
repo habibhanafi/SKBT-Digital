@@ -888,22 +888,44 @@ async function submitToGoogle() {
   }
 
 
-  /* -------------------------------------------------------
+  /* =====================================================
+     BUAT TRANSACTION ID
+     ===================================================== */
+
+  const transactionId =
+    "TX-" +
+    Date.now() +
+    "-" +
+    Math.random()
+      .toString(36)
+      .substring(2, 8);
+
+
+  console.log(
+    "[SKBT] Transaction ID:",
+    transactionId
+  );
+
+
+  /* =====================================================
      KUMPULKAN FILE
-     ------------------------------------------------------- */
+     ===================================================== */
 
   const files =
     await collectFiles();
 
 
-  /* -------------------------------------------------------
+  /* =====================================================
      DATA
-     ------------------------------------------------------- */
+     ===================================================== */
 
   const payload = {
 
     action:
       "submit",
+
+    transactionId:
+      transactionId,
 
     keperluan:
       val("keperluan"),
@@ -938,9 +960,9 @@ async function submitToGoogle() {
   };
 
 
-  /* -------------------------------------------------------
-     IFRAME RESPONSE
-     ------------------------------------------------------- */
+  /* =====================================================
+     IFRAME SUBMIT
+     ===================================================== */
 
   let iframe =
     document.getElementById(
@@ -955,24 +977,14 @@ async function submitToGoogle() {
         "iframe"
       );
 
-
     iframe.id =
       "submitFrame";
-
 
     iframe.name =
       "submitFrame";
 
-
-    iframe.setAttribute(
-      "aria-hidden",
-      "true"
-    );
-
-
     iframe.style.display =
       "none";
-
 
     document.body.appendChild(
       iframe
@@ -981,160 +993,9 @@ async function submitToGoogle() {
   }
 
 
-  submissionState.active =
-    true;
-
-
-  submissionState.responseReceived =
-    false;
-
-
-  submissionState.iframe =
-    iframe;
-
-
-  if (
-    submissionState.fallbackTimer
-  ) {
-
-    clearTimeout(
-      submissionState.fallbackTimer
-    );
-
-  }
-
-
-  if (
-    submissionState.timeoutTimer
-  ) {
-
-    clearTimeout(
-      submissionState.timeoutTimer
-    );
-
-  }
-
-
-  /* -------------------------------------------------------
-     FALLBACK
-
-     postMessage tetap menjadi mekanisme utama.
-
-     Jika postMessage tidak diterima karena halaman
-     berada di dalam nested iframe, iframe.onload
-     digunakan sebagai fallback tampilan.
-     ------------------------------------------------------- */
-
-  iframe.onload =
-    function() {
-
-      if (
-        !submissionState.active
-      ) {
-
-        return;
-
-      }
-
-
-      console.log(
-        "[SKBT] Response iframe selesai dimuat."
-      );
-
-
-      if (
-        submissionState.fallbackTimer
-      ) {
-
-        clearTimeout(
-          submissionState.fallbackTimer
-        );
-
-      }
-
-
-      submissionState.fallbackTimer =
-        setTimeout(
-
-          function() {
-
-            if (
-              !submissionState.active ||
-              submissionState.responseReceived
-            ) {
-
-              return;
-
-            }
-
-
-            console.warn(
-              "[SKBT] postMessage tidak diterima. Menggunakan fallback iframe."
-            );
-
-
-            showSuccessFallback();
-
-          },
-
-          800
-
-        );
-
-    };
-
-
-  /* -------------------------------------------------------
-     TIMEOUT KESELAMATAN
-     ------------------------------------------------------- */
-
-  submissionState.timeoutTimer =
-    setTimeout(
-
-      function() {
-
-        if (
-          !submissionState.active ||
-          submissionState.responseReceived
-        ) {
-
-          return;
-
-        }
-
-
-        console.error(
-          "[SKBT] Timeout menunggu response Google Apps Script."
-        );
-
-
-        submissionState.active =
-          false;
-
-
-        hideSubmitLoading();
-
-
-        resetSubmitButton();
-
-
-        alert(
-          "Server tidak memberikan respons dalam waktu yang ditentukan. " +
-          "Periksa koneksi internet. Jika data sudah masuk Spreadsheet, " +
-          "jangan kirim ulang sebelum memastikan statusnya."
-        );
-
-
-      },
-
-      45000
-
-    );
-
-
-  /* -------------------------------------------------------
+  /* =====================================================
      FORM POST
-     ------------------------------------------------------- */
+     ===================================================== */
 
   const postForm =
     document.createElement(
@@ -1145,23 +1006,14 @@ async function submitToGoogle() {
   postForm.method =
     "POST";
 
-
   postForm.action =
     GOOGLE_SCRIPT_URL;
-
 
   postForm.target =
     "submitFrame";
 
-
   postForm.style.display =
     "none";
-
-
-  postForm.setAttribute(
-    "aria-hidden",
-    "true"
-  );
 
 
   Object.keys(payload)
@@ -1173,18 +1025,14 @@ async function submitToGoogle() {
             "input"
           );
 
-
         input.type =
           "hidden";
-
 
         input.name =
           key;
 
-
         input.value =
           payload[key];
-
 
         postForm.appendChild(
           input
@@ -1200,20 +1048,12 @@ async function submitToGoogle() {
 
 
   console.log(
-    "[SKBT] Mengirim permohonan ke Google Apps Script..."
+    "[SKBT] Mengirim data..."
   );
 
 
-  /* -------------------------------------------------------
-     SUBMIT
-     ------------------------------------------------------- */
-
   postForm.submit();
 
-
-  /* -------------------------------------------------------
-     HAPUS FORM KIRIM
-     ------------------------------------------------------- */
 
   setTimeout(
     function() {
@@ -1230,6 +1070,16 @@ async function submitToGoogle() {
 
     },
     1000
+  );
+
+
+  /* =====================================================
+     POLLING
+     Tidak menunggu postMessage.
+     ===================================================== */
+
+  await waitForApplicationNumber(
+    transactionId
   );
 
 }
