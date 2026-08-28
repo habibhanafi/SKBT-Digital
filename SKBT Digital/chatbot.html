@@ -759,10 +759,10 @@ body {
 
         <div class="message bot">
 
-            <div class="bubble">Halo 👋
-Saya adalah <b>Asisten AI Interaktif</b>.
-Saya dapat menjawab pertanyaan anda mengenai layanan Surat Keterangan Bebas Temuan (SKBT)
-secara otomatis.</div>
+            <div class="bubble">
+>Halo 👋 Saya adalah <b>Asisten AI Interaktif</b>.
+Saya dapat menjawab pertanyaan anda mengenai 
+layanan Surat Keterangan Bebas Temuan (SKBT) secara otomatis.</div>
 
         </div>
 
@@ -857,7 +857,14 @@ secara otomatis.</div>
 /* =========================================================
    URL CLOUDFLARE WORKER
    ========================================================= */
+// Matikan fitur penyesuaian scroll bawaan browser
+if ('scrollRestoration' in history) {
+  history.scrollRestoration = 'manual';
+}
 
+// Paksa scroll ke posisi paling atas (x: 0, y: 0) saat halaman dibuka
+window.scrollTo(0, 0);
+    
 const WORKER_URL =
     "https://quiet-bush-fe39.muhammadhabib348.workers.dev/";
 
