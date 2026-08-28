@@ -1,18 +1,5 @@
 /* =========================================================
-   SKBT DIGITAL
-   SCRIPT.JS FINAL
-   ---------------------------------------------------------
-   Fitur:
-   - Multi step form
-   - Upload dokumen
-   - Validasi file
-   - Review data
-   - Kirim ke Google Apps Script
-   - Transaction ID
-   - Polling nomor permohonan
-   - Fallback postMessage
-   - Integrasi chatbot melalui #chatdata=
-   - Aman digunakan di GitHub maupun iframe Inspektorat
+   SKBT DIGITAL - SCRIPT.JS FINAL
    ========================================================= */
 
 
@@ -93,7 +80,7 @@ const heirs = [
 
 
 /* =========================================================
-   MEMBUAT HTML UPLOAD
+   HTML UPLOAD
    ========================================================= */
 
 function uploadHTML(items) {
@@ -246,8 +233,7 @@ document.addEventListener(
 
     if (
       !event.target ||
-      event.target.type !==
-      "file"
+      event.target.type !== "file"
     ) {
 
       return;
@@ -475,9 +461,7 @@ function prev() {
 function show() {
 
   document
-    .querySelectorAll(
-      ".step"
-    )
+    .querySelectorAll(".step")
     .forEach(
       function(section) {
 
@@ -535,15 +519,11 @@ function show() {
 
 
   const l1 =
-    document.getElementById(
-      "l1"
-    );
+    document.getElementById("l1");
 
 
   const l2 =
-    document.getElementById(
-      "l2"
-    );
+    document.getElementById("l2");
 
 
   if (l1) {
@@ -585,15 +565,13 @@ function show() {
 
 
 /* =========================================================
-   AMBIL NILAI
+   AMBIL NILAI FORM
    ========================================================= */
 
 function val(id) {
 
   const element =
-    document.getElementById(
-      id
-    );
+    document.getElementById(id);
 
 
   return element
@@ -873,7 +851,7 @@ async function collectFiles() {
 
 
 /* =========================================================
-   BUAT TRANSACTION ID
+   GENERATE TRANSACTION ID
    ========================================================= */
 
 function generateTransactionId() {
@@ -902,10 +880,7 @@ function generateTransactionId() {
 async function submitToGoogle() {
 
   if (
-    !GOOGLE_SCRIPT_URL ||
-    GOOGLE_SCRIPT_URL.includes(
-      "GANTI_DENGAN"
-    )
+    !GOOGLE_SCRIPT_URL
   ) {
 
     throw new Error(
@@ -929,7 +904,7 @@ async function submitToGoogle() {
 
 
   /* -------------------------------------------------------
-     TRANSACTION ID
+     BUAT TRANSACTION ID
      ------------------------------------------------------- */
 
   currentTransactionId =
@@ -1104,7 +1079,7 @@ async function submitToGoogle() {
 
 
   console.log(
-    "[SKBT] Mengirim data ke Apps Script..."
+    "[SKBT] Mengirim data ke Google Apps Script..."
   );
 
 
@@ -1191,7 +1166,7 @@ function stopPolling() {
 
 
 /* =========================================================
-   CEK STATUS
+   CEK STATUS / NOMOR
    ========================================================= */
 
 async function checkStatus(
@@ -1211,25 +1186,20 @@ async function checkStatus(
 
 
   console.log(
-    "[SKBT] Pemeriksaan status:",
-    pollingAttempts
+    "[SKBT] Cek nomor:",
+    pollingAttempts,
+    "/ 30"
   );
 
 
   const url =
-
     GOOGLE_SCRIPT_URL +
-
     "?action=status" +
-
     "&transactionId=" +
-
     encodeURIComponent(
       transactionId
     ) +
-
     "&t=" +
-
     Date.now();
 
 
@@ -1257,21 +1227,20 @@ async function checkStatus(
 
 
       console.log(
-        "[SKBT] Response status:",
+        "[SKBT] Status:",
         data
       );
 
 
+      /* ---------------------------------------------------
+         NOMOR SUDAH DITEMUKAN
+         --------------------------------------------------- */
+
       if (
-
         data &&
-
         data.success === true &&
-
         data.found === true &&
-
         data.nomor
-
       ) {
 
         responseReceived =
@@ -1309,7 +1278,7 @@ async function checkStatus(
   catch (error) {
 
     console.warn(
-      "[SKBT] Polling error:",
+      "[SKBT] Error polling:",
       error
     );
 
@@ -1317,8 +1286,7 @@ async function checkStatus(
 
 
   /* -------------------------------------------------------
-     MAKSIMAL 60 DETIK
-     30 x 2 detik
+     JIKA BELUM DITEMUKAN
      ------------------------------------------------------- */
 
   if (
@@ -1326,11 +1294,6 @@ async function checkStatus(
   ) {
 
     stopPolling();
-
-
-    console.error(
-      "[SKBT] Nomor belum ditemukan setelah 60 detik."
-    );
 
 
     hideSubmitLoading();
@@ -1347,9 +1310,9 @@ async function checkStatus(
 
       "Permohonan sedang diproses, tetapi nomor permohonan belum dapat ditampilkan.\n\n" +
 
-      "Silakan jangan mengirim ulang permohonan.\n\n" +
+      "JANGAN mengirim ulang permohonan.\n\n" +
 
-      "Gunakan menu Cek Status Permohonan."
+      "Silakan gunakan menu Cek Status Permohonan."
 
     );
 
@@ -1358,6 +1321,10 @@ async function checkStatus(
 
   }
 
+
+  /* -------------------------------------------------------
+     CEK LAGI 2 DETIK
+     ------------------------------------------------------- */
 
   pollingTimer =
     setTimeout(
@@ -1375,10 +1342,10 @@ async function checkStatus(
 
 
 /* =========================================================
-   RESPONSE DARI GOOGLE APPS SCRIPT
+   POSTMESSAGE
    ---------------------------------------------------------
-   postMessage tetap digunakan sebagai jalur cepat.
-   Polling tetap menjadi mekanisme utama.
+   Tetap dipertahankan sebagai jalur cepat.
+   Polling tetap bekerja jika postMessage tidak berhasil.
    ========================================================= */
 
 window.addEventListener(
@@ -1418,8 +1385,8 @@ window.addEventListener(
 
 
     /*
-     * Kalau response sudah diterima
-     * dari polling, abaikan duplikat.
+     * Kalau polling sudah mendapatkan
+     * nomor, jangan tampilkan dua kali.
      */
 
     if (
@@ -1432,8 +1399,7 @@ window.addEventListener(
 
 
     /*
-     * Jika nomor tersedia langsung,
-     * gunakan response tersebut.
+     * Response berhasil.
      */
 
     if (
@@ -1459,7 +1425,7 @@ window.addEventListener(
 
 
     /*
-     * Jika gagal.
+     * Response gagal.
      */
 
     if (
@@ -1499,20 +1465,12 @@ function handleSubmissionResponse(
   }
 
 
-  /* -------------------------------------------------------
-     HENTIKAN POLLING
-     ------------------------------------------------------- */
-
   stopPolling();
 
 
   responseReceived =
     true;
 
-
-  /* -------------------------------------------------------
-     HILANGKAN LOADING
-     ------------------------------------------------------- */
 
   hideSubmitLoading();
 
@@ -1533,7 +1491,7 @@ function handleSubmissionResponse(
 
 
   /* -------------------------------------------------------
-     JIKA GAGAL
+     GAGAL
      ------------------------------------------------------- */
 
   if (
@@ -1559,7 +1517,7 @@ function handleSubmissionResponse(
 
 
   /* -------------------------------------------------------
-     NOMOR PERMOHONAN
+     NOMOR
      ------------------------------------------------------- */
 
   const number =
@@ -1578,7 +1536,7 @@ function handleSubmissionResponse(
 
 
   /* -------------------------------------------------------
-     SIMPAN NOMOR DI SESSION
+     SIMPAN KE SESSION
      ------------------------------------------------------- */
 
   try {
@@ -1667,8 +1625,11 @@ function handleSubmissionResponse(
   }
 
 
+  hideSubmitLoading();
+
+
   /*
-   * Jangan aktifkan kembali tombol
+   * Jangan membuka kembali tombol
    * setelah berhasil.
    */
 
@@ -1693,10 +1654,46 @@ function handleSubmissionResponse(
 
 function showSubmitLoading() {
 
+  const button =
+    document.getElementById(
+      "submitBtn"
+    );
+
+
   const loading =
     document.getElementById(
       "submitLoading"
     );
+
+
+  const loadingText =
+    document.getElementById(
+      "loadingText"
+    );
+
+
+  if (button) {
+
+    button.disabled =
+      true;
+
+
+    button.style.pointerEvents =
+      "none";
+
+
+    button.style.opacity =
+      "0.7";
+
+
+    button.style.cursor =
+      "not-allowed";
+
+
+    button.innerHTML =
+      "⏳ Mengirim...";
+
+  }
 
 
   if (loading) {
@@ -1708,17 +1705,10 @@ function showSubmitLoading() {
   }
 
 
-  const sending =
-    document.getElementById(
-      "sending"
-    );
+  if (loadingText) {
 
-
-  if (sending) {
-
-    sending.classList.add(
-      "show"
-    );
+    loadingText.textContent =
+      "Mengirim permohonan...";
 
   }
 
@@ -1764,7 +1754,7 @@ function hideSubmitLoading() {
 
 
 /* =========================================================
-   KUNCI TOMBOL SUBMIT
+   KUNCI TOMBOL
    ========================================================= */
 
 function lockSubmitButton() {
@@ -1786,20 +1776,20 @@ function lockSubmitButton() {
     true;
 
 
-  button.dataset.originalText =
-    button.innerHTML;
-
-
-  button.innerHTML =
-    "⏳ Mengirim Permohonan...";
+  button.style.pointerEvents =
+    "none";
 
 
   button.style.opacity =
-    "0.7";
+    "0.6";
 
 
   button.style.cursor =
     "not-allowed";
+
+
+  button.innerHTML =
+    "⏳ Mengirim...";
 
 }
 
@@ -1827,20 +1817,8 @@ function resetSubmitButton() {
     false;
 
 
-  if (
-    button.dataset.originalText
-  ) {
-
-    button.innerHTML =
-      button.dataset.originalText;
-
-  }
-  else {
-
-    button.innerHTML =
-      "✓ Kirim Permohonan";
-
-  }
+  button.style.pointerEvents =
+    "";
 
 
   button.style.opacity =
@@ -1849,6 +1827,14 @@ function resetSubmitButton() {
 
   button.style.cursor =
     "";
+
+
+  button.innerHTML =
+    "✓ Kirim Permohonan";
+
+
+  isSubmitting =
+    false;
 
 }
 
@@ -1889,7 +1875,7 @@ if (mainForm) {
 
 
       /* ---------------------------------------------------
-         CHECKLIST FINAL
+         CHECKLIST
          --------------------------------------------------- */
 
       const final =
@@ -1980,10 +1966,6 @@ if (mainForm) {
         resetSubmitButton();
 
 
-        isSubmitting =
-          false;
-
-
         alert(
 
           error &&
@@ -2040,7 +2022,7 @@ function escapeHTML(value) {
 
 
 /* =========================================================
-   MEMBACA DATA DARI CHATBOT
+   DATA DARI CHATBOT
    ========================================================= */
 
 function loadChatbotData() {
@@ -2086,10 +2068,6 @@ function loadChatbotData() {
       data
     );
 
-
-    /* -----------------------------------------------------
-       ISI FORM
-       ----------------------------------------------------- */
 
     setFieldValue(
       "keperluan",
@@ -2145,10 +2123,6 @@ function loadChatbotData() {
     );
 
 
-    /* -----------------------------------------------------
-       TRIGGER PERUBAHAN KEPERLUAN
-       ----------------------------------------------------- */
-
     const keperluanElement =
       document.getElementById(
         "keperluan"
@@ -2184,15 +2158,10 @@ function loadChatbotData() {
       "",
 
       window.location.pathname +
-
       window.location.search
 
     );
 
-
-    /* -----------------------------------------------------
-       TAMPILKAN NOTIFIKASI
-       ----------------------------------------------------- */
 
     showChatbotNotice();
 
@@ -2269,7 +2238,7 @@ function setFieldValue(
 
 
 /* =========================================================
-   NOTIFIKASI DATA CHATBOT
+   NOTIFIKASI CHATBOT
    ========================================================= */
 
 function showChatbotNotice() {
@@ -2324,8 +2293,8 @@ function showChatbotNotice() {
 
     <br>
 
-    Data pemohon telah diisi otomatis
-    dari percakapan dengan Asisten SKBT Digital.
+    Data pemohon telah diisi otomatis dari percakapan
+    dengan Asisten SKBT Digital.
 
     Silakan periksa kembali data sebelum melanjutkan.
 
@@ -2350,7 +2319,7 @@ function showChatbotNotice() {
 
 
 /* =========================================================
-   JALANKAN SAAT HALAMAN SELESAI DIMUAT
+   DOM READY
    ========================================================= */
 
 document.addEventListener(
