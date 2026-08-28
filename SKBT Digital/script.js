@@ -1084,6 +1084,74 @@ async function submitToGoogle() {
 
 }
 
+/* =========================================================
+   CEK NOMOR KE GOOGLE APPS SCRIPT
+   ========================================================= */
+
+async function checkApplicationStatus(
+  transactionId
+) {
+
+  const url =
+    GOOGLE_SCRIPT_URL +
+    "?action=status&transactionId=" +
+    encodeURIComponent(
+      transactionId
+    ) +
+    "&t=" +
+    Date.now();
+
+
+  try {
+
+    const response =
+      await fetch(
+        url,
+        {
+          method: "GET",
+          cache: "no-store"
+        }
+      );
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        "HTTP " +
+        response.status
+      );
+
+    }
+
+
+    const data =
+      await response.json();
+
+
+    console.log(
+      "[SKBT] Status:",
+      data
+    );
+
+
+    return data;
+
+  }
+
+  catch (error) {
+
+    console.warn(
+      "[SKBT] Gagal cek status:",
+      error
+    );
+
+
+    return null;
+
+  }
+
+}
+
 
 /* =========================================================
    KUNCI TOMBOL SUBMIT
