@@ -2347,7 +2347,7 @@ const dataSKPD = {
                 "Dinas Perindustrian, Tenaga Kerja, dan Transmigrasi",
                 "Dinas Pemberdayaan Perempuan, Perlindungan Anak, dan Keluarga Berencana",
                 "Dinas Ketahanan Pangan dan Penyuluhan",
-                "Dinas Lingkungan Hidup (DLH)",
+                "Dinas Lingkungan Hidup",
                 "Dinas Kependudukan dan Pencatatan Sipil",
                 "Dinas Pemberdayaan Masyarakat dan Gampong",
                 "Dinas Perhubungan",
