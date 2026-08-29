@@ -2334,7 +2334,7 @@ document.addEventListener(
 );
 const dataSKPD = {
             "Sekretariat & Inspektorat": [
-                "Sekretariat Daerah (SETDAKAB)",
+                "Sekretariat Daerah",
                 "Sekretariat Dewan Perwakilan Rakyat Kabupaten",
                 "Inspektorat Daerah"
             ],
