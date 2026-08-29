@@ -99,7 +99,7 @@ button{border:0;border-radius:9px;padding:13px 22px;font-weight:bold;cursor:poin
 }
 .keterangan {
  font-size:12px;
- font-style:oblique;
+ font-style:normal;
 }
 @keyframes skbtSpin {
   to {
