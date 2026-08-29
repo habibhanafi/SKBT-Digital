@@ -97,7 +97,9 @@ button{border:0;border-radius:9px;padding:13px 22px;font-weight:bold;cursor:poin
   border-radius: 50%;
   animation: skbtSpin 0.8s linear infinite;
 }
-
+.keterangan {
+ font-size:6px;
+}
 @keyframes skbtSpin {
   to {
     transform: rotate(360deg);
