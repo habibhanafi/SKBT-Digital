@@ -2334,26 +2334,26 @@ document.addEventListener(
 );
  const dataSKPD = {
             "Sekretariat & Inspektorat": [
-                "Sekretariat Daerah (SETDAKAB)",
-                "Sekretariat Dewan Perwakilan Rakyat Kabupaten",
+                "Sekretariat Daerah",
+                "Sekretariat Dewan Perwakilan Rakyat",
                 "Inspektorat Daerah"
             ],
             "Dinas-Dinas Daerah": [
                 "Dinas Pendidikan dan Kebudayaan",
                 "Dinas Kesehatan",
-                "Dinas Pekerjaan Umum dan Perumahan Rakyat (PUPR)",
-                "Satuan Polisi Pamong Praja dan Wilayatul Hisbah (Satpol PP & WH)",
+                "Dinas Pekerjaan Umum dan Perumahan Rakyat",
+                "Satuan Polisi Pamong Praja dan Wilayatul Hisbah",
                 "Dinas Sosial",
                 "Dinas Perindustrian, Tenaga Kerja, dan Transmigrasi",
-                "Dinas Pemberdayaan Perempuan, Perlindungan Anak, dan Keluarga Berencana (DPPPAKB)",
+                "Dinas Pemberdayaan Perempuan, Perlindungan Anak, dan Keluarga Berencana",
                 "Dinas Ketahanan Pangan dan Penyuluhan",
-                "Dinas Lingkungan Hidup (DLH)",
-                "Dinas Kependudukan dan Pencatatan Sipil (Disdukcapil)",
-                "Dinas Pemberdayaan Masyarakat dan Gampong (DPMG)",
-                "Dinas Perhubungan (Dishub)",
-                "Dinas Komunikasi dan Informatika (Diskominfo)",
+                "Dinas Lingkungan Hidup",
+                "Dinas Kependudukan dan Pencatatan Sipil",
+                "Dinas Pemberdayaan Masyarakat dan Gampong",
+                "Dinas Perhubungan",
+                "Dinas Komunikasi dan Informatika",
                 "Dinas Perdagangan, Koperasi, dan Usaha Kecil Menengah",
-                "Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu (DPMPTSP)",
+                "Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu ",
                 "Dinas Pariwisata, Pemuda, dan Olahraga (Disparpora)",
                 "Dinas Perpustakaan dan Kearsipan",
                 "Dinas Kelautan dan Perikanan",
@@ -2364,16 +2364,16 @@ document.addEventListener(
                 "Dinas Pertanahan"
             ],
             "Badan-Badan Daerah": [
-                "Badan Perencanaan Pembangunan Daerah (BAPPEDA)",
-                "Badan Pengelolaan Keuangan dan Pendapatan Daerah (BPKPD)",
-                "Badan Kepegawaian dan Pengembangan Sumber Daya Manusia (BKPSDM)",
-                "Badan Kesatuan Bangsa dan Politik (Kesbangpol)",
-                "Badan Penanggulangan Bencana Daerah (BPBD)"
+                "Badan Perencanaan Pembangunan Daerah",
+                "Badan Pengelolaan Keuangan dan Pendapatan Daerah",
+                "Badan Kepegawaian dan Pengembangan Sumber Daya Manusia",
+                "Badan Kesatuan Bangsa dan Politik",
+                "Badan Penanggulangan Bencana Daerah"
             ],
             "Lembaga Keistimewaan & Sekretariat Khusus": [
-                "Sekretariat Majelis Permusyawaratan Ulama (MPU)",
-                "Sekretariat Majelis Adat Aceh (MAA)",
-                "Sekretariat Majelis Pendidikan Aceh (MPA)",
+                "Sekretariat Majelis Permusyawaratan Ulama",
+                "Sekretariat Majelis Adat Aceh",
+                "Sekretariat Majelis Pendidikan Aceh",
                 "Sekretariat Baitul Mal"
             ],
             "Kecamatan": [
