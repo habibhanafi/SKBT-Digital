@@ -2356,16 +2356,16 @@ document.addEventListener(
                 "Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu ",
                 "Dinas Pariwisata, Pemuda, dan Olahraga (Disparpora)",
                 "Dinas Perpustakaan dan Kearsipan",
-                "Dinas Kelautan dan Perikanan",
+                "Dinas Perikanan,
                 "Dinas Tanaman Pangan dan Hortikultura",
                 "Dinas Perkebunan dan Peternakan",
-                "Dinas Syariat Islam (DSI)",
+                "Dinas Syariat Islam",
                 "Dinas Pendidikan Dayah",
                 "Dinas Pertanahan"
             ],
             "Badan-Badan Daerah": [
                 "Badan Perencanaan Pembangunan Daerah",
-                "Badan Pengelolaan Keuangan dan Pendapatan Daerah",
+                "Badan Pengelolaan Keuangan Daerah",
                 "Badan Kepegawaian dan Pengembangan Sumber Daya Manusia",
                 "Badan Kesatuan Bangsa dan Politik",
                 "Badan Penanggulangan Bencana Daerah"
