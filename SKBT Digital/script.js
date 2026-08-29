@@ -2332,3 +2332,88 @@ document.addEventListener(
 
   }
 );
+ const dataSKPD = {
+            "Sekretariat & Inspektorat": [
+                "Sekretariat Daerah (SETDAKAB)",
+                "Sekretariat Dewan Perwakilan Rakyat Kabupaten",
+                "Inspektorat Daerah"
+            ],
+            "Dinas-Dinas Daerah": [
+                "Dinas Pendidikan dan Kebudayaan",
+                "Dinas Kesehatan",
+                "Dinas Pekerjaan Umum dan Perumahan Rakyat (PUPR)",
+                "Satuan Polisi Pamong Praja dan Wilayatul Hisbah (Satpol PP & WH)",
+                "Dinas Sosial",
+                "Dinas Perindustrian, Tenaga Kerja, dan Transmigrasi",
+                "Dinas Pemberdayaan Perempuan, Perlindungan Anak, dan Keluarga Berencana (DPPPAKB)",
+                "Dinas Ketahanan Pangan dan Penyuluhan",
+                "Dinas Lingkungan Hidup (DLH)",
+                "Dinas Kependudukan dan Pencatatan Sipil (Disdukcapil)",
+                "Dinas Pemberdayaan Masyarakat dan Gampong (DPMG)",
+                "Dinas Perhubungan (Dishub)",
+                "Dinas Komunikasi dan Informatika (Diskominfo)",
+                "Dinas Perdagangan, Koperasi, dan Usaha Kecil Menengah",
+                "Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu (DPMPTSP)",
+                "Dinas Pariwisata, Pemuda, dan Olahraga (Disparpora)",
+                "Dinas Perpustakaan dan Kearsipan",
+                "Dinas Kelautan dan Perikanan",
+                "Dinas Tanaman Pangan dan Hortikultura",
+                "Dinas Perkebunan dan Peternakan",
+                "Dinas Syariat Islam (DSI)",
+                "Dinas Pendidikan Dayah",
+                "Dinas Pertanahan"
+            ],
+            "Badan-Badan Daerah": [
+                "Badan Perencanaan Pembangunan Daerah (BAPPEDA)",
+                "Badan Pengelolaan Keuangan dan Pendapatan Daerah (BPKPD)",
+                "Badan Kepegawaian dan Pengembangan Sumber Daya Manusia (BKPSDM)",
+                "Badan Kesatuan Bangsa dan Politik (Kesbangpol)",
+                "Badan Penanggulangan Bencana Daerah (BPBD)"
+            ],
+            "Lembaga Keistimewaan & Sekretariat Khusus": [
+                "Sekretariat Majelis Permusyawaratan Ulama (MPU)",
+                "Sekretariat Majelis Adat Aceh (MAA)",
+                "Sekretariat Majelis Pendidikan Aceh (MPA)",
+                "Sekretariat Baitul Mal"
+            ],
+            "Kecamatan": [
+                "Kecamatan Banda Alam",
+                "Kecamatan Birem Bayeun",
+                "Kecamatan Darul Aman",
+                "Kecamatan Darul Ihsan",
+                "Kecamatan Idi Rayeuk",
+                "Kecamatan Idi Timur",
+                "Kecamatan Idi Tunong",
+                "Kecamatan Indra Makmu",
+                "Kecamatan Julok",
+                "Kecamatan Madat",
+                "Kecamatan Nurussalam",
+                "Kecamatan Pante Bidari",
+                "Kecamatan Peudawa",
+                "Kecamatan Peureulak",
+                "Kecamatan Peureulak Barat",
+                "Kecamatan Peureulak Timur",
+                "Kecamatan Ranto Peureulak",
+                "Kecamatan Ranto Selamat",
+                "Kecamatan Serbajadi",
+                "Kecamatan Simpang Jernih",
+                "Kecamatan Simpang Ulim",
+                "Kecamatan Sungai Raya"
+            ]
+        };
+
+        const selectElement = document.getElementById('instansi');
+
+        for (const [kategori, daftar] of Object.entries(dataSKPD)) {
+            const optgroup = document.createElement('optgroup');
+            optgroup.label = kategori;
+
+            daftar.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item;
+                option.textContent = item;
+                optgroup.appendChild(option);
+            });
+
+            selectElement.appendChild(optgroup);
+        }
