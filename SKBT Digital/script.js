@@ -2400,6 +2400,9 @@ const dataSKPD = {
                 "Kecamatan Simpang Ulim",
                 "Kecamatan Sungai Raya"
             ]
+          "Rumah Sakit Umum Daerah": [
+               "UPTD RSUD dr. Zubir Mahmud",
+               "UPTD RSUD Sultan Abdul Azis Syah",
         };
 
         const selectElement = document.getElementById('instansi');
