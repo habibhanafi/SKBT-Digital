@@ -2399,7 +2399,7 @@ const dataSKPD = {
                 "Kecamatan Simpang Jernih",
                 "Kecamatan Simpang Ulim",
                 "Kecamatan Sungai Raya"
-            ]
+            ],
           "Rumah Sakit Umum Daerah": [
                "RSUD dr. Zubir Mahmud",
                "UPTD RSUD Sultan Abdul Aziz Syah "
