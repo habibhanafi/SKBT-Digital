@@ -2353,7 +2353,7 @@ const dataSKPD = {
                 "Dinas Perhubungan",
                 "Dinas Komunikasi dan Informatika",
                 "Dinas Perdagangan, Koperasi, dan Usaha Kecil Menengah",
-                "Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu",
+                "Dinas Penanaman Modal dan Pelayanan Perizinan Terpadu",
                 "Dinas Pariwisata, Pemuda, dan Olahraga",
                 "Dinas Perpustakaan dan Kearsipan",
                 "Dinas Perikanan",
@@ -2380,6 +2380,7 @@ const dataSKPD = {
                 "Kecamatan Banda Alam",
                 "Kecamatan Birem Bayeun",
                 "Kecamatan Darul Aman",
+                "Kecamatan Darul Falah",
                 "Kecamatan Darul Ihsan",
                 "Kecamatan Idi Rayeuk",
                 "Kecamatan Idi Timur",
@@ -2401,8 +2402,8 @@ const dataSKPD = {
                 "Kecamatan Sungai Raya"
             ],
           "Rumah Sakit Umum Daerah": [
-               "RSUD dr. Zubir Mahmud",
-               "UPTD RSUD Sultan Abdul Aziz Syah "
+               "UPTD RSUD dr. Zubir Mahmud Idi",
+               "UPTD RSUD Sultan Abdul Aziz Syah Peureulak "
           ]
         };
 
