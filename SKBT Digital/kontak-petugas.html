@@ -1,10 +1,24 @@
 <html>
   <head>
     <script>
-  // Otomatis scroll ke atas saat halaman baru selesai dimuat
-  window.onload = function() {
+  function forceScrollToTop() {
+    // 1. Scroll window/body utama
     window.scrollTo(0, 0);
-  };
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+
+    // 2. Paksa scroll pada SEMUA elemen div di dalam halaman yang memiliki scrollbar
+    const allDivs = document.querySelectorAll('div, main, section, container');
+    allDivs.forEach(el => {
+      el.scrollTop = 0;
+    });
+  }
+
+  // Jalankan langsung dan beri penundaan (timeout) untuk menangani render lambat
+  window.addEventListener('DOMContentLoaded', forceScrollToTop);
+  window.addEventListener('load', forceScrollToTop);
+  setTimeout(forceScrollToTop, 100);
+  setTimeout(forceScrollToTop, 500);
 </script>
     <style>
       body {
