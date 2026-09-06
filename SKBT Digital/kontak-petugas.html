@@ -1,24 +1,17 @@
 <html>
   <head>
-    <script>
-  function forceScrollToTop() {
-    // 1. Scroll window/body utama
-    window.scrollTo(0, 0);
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
-
-    // 2. Paksa scroll pada SEMUA elemen div di dalam halaman yang memiliki scrollbar
-    const allDivs = document.querySelectorAll('div, main, section, container');
-    allDivs.forEach(el => {
-      el.scrollTop = 0;
-    });
+  <style>
+  /* Matikan sementara perilaku smooth scroll agar langsung melompat ke atas */
+  html, body {
+    scroll-behavior: auto !important;
   }
+</style>
 
-  // Jalankan langsung dan beri penundaan (timeout) untuk menangani render lambat
-  window.addEventListener('DOMContentLoaded', forceScrollToTop);
-  window.addEventListener('load', forceScrollToTop);
-  setTimeout(forceScrollToTop, 100);
-  setTimeout(forceScrollToTop, 500);
+<script>
+  // Eksekusi secepat mungkin sebelum render selesai
+  document.addEventListener("DOMContentLoaded", function() {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  });
 </script>
     <style>
       body {
