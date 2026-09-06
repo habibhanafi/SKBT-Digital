@@ -8,7 +8,15 @@
   <!-- Font Awesome untuk ikon -->
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
+	<script>
+function resetParentFrameScroll() {
+  // Mengakses elemen frame dari dalam frame itu sendiri
+  if (window.parent && window.parent !== window) {
+    // Reset scroll halaman utama & frame
+    window.parent.scrollTo(0, 0);
+  }
+}
+</script>
   <style>
     * {
       box-sizing: border-box;
@@ -247,7 +255,7 @@
       </a>
 
 	 <!-- 5. Kontak Petugas -->
-      <a class="menu-card" href="https://habibhanafi.github.io/SKBT-Digital/SKBT%20Digital/kontak-petugas.html">
+      <a class="menu-card" href="https://habibhanafi.github.io/SKBT-Digital/SKBT%20Digital/kontak-petugas.html" onclick="resetParentFrameScroll()">
         <div class="icon">
           <i class="fa-solid fa-headset"></i>
         </div>
