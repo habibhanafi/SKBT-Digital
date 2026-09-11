@@ -3,13 +3,10 @@
 
 <head>
   <meta charset="UTF-8">
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Cek Status SKBT Digital</title>
 
   <style>
-
     * {
       box-sizing: border-box;
     }
@@ -17,60 +14,43 @@
     body {
       margin: 0;
       padding: 20px;
-
-      font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
+      font-family: Arial, Helvetica, sans-serif;
       background: #f5f7fb;
-
       color: #1f2937;
     }
 
     .container {
       width: 100%;
       max-width: 700px;
-
       margin: 30px auto;
     }
 
     .card {
       background: #ffffff;
-
       border-radius: 18px;
-
       padding: 30px;
-
-      box-shadow:
-        0 8px 30px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
     }
 
     .header {
       text-align: center;
-
       margin-bottom: 25px;
     }
 
     .header small {
       color: #1457a6;
-
       font-weight: bold;
-
       letter-spacing: 1px;
     }
 
     .header h2 {
       margin: 8px 0;
-
       font-size: 28px;
     }
 
     .header p {
       margin: 0;
-
       color: #6b7280;
-
       line-height: 1.5;
     }
 
@@ -80,55 +60,35 @@
 
     label {
       display: block;
-
       margin-bottom: 8px;
-
       font-weight: 600;
     }
 
     input {
       width: 100%;
-
       padding: 14px 16px;
-
-      border:
-        1px solid #d1d5db;
-
+      border: 1px solid #d1d5db;
       border-radius: 10px;
-
       font-size: 16px;
-
       outline: none;
-
       text-transform: uppercase;
     }
 
     input:focus {
       border-color: #1457a6;
-
-      box-shadow:
-        0 0 0 3px rgba(20, 87, 166, 0.10);
+      box-shadow: 0 0 0 3px rgba(20, 87, 166, 0.10);
     }
 
     button {
       width: 100%;
-
       margin-top: 15px;
-
       padding: 14px;
-
       border: none;
-
       border-radius: 10px;
-
       background: #1457a6;
-
       color: white;
-
       font-size: 16px;
-
       font-weight: bold;
-
       cursor: pointer;
     }
 
@@ -138,19 +98,14 @@
 
     button:disabled {
       opacity: 0.65;
-
       cursor: not-allowed;
     }
 
     /* LOADING */
-
     .loading {
       display: none;
-
       text-align: center;
-
       margin-top: 25px;
-
       color: #1457a6;
     }
 
@@ -160,46 +115,28 @@
 
     .spinner {
       width: 32px;
-
       height: 32px;
-
       margin: 0 auto 10px;
-
-      border:
-        4px solid #dbeafe;
-
-      border-top:
-        4px solid #1457a6;
-
+      border: 4px solid #dbeafe;
+      border-top: 4px solid #1457a6;
       border-radius: 50%;
-
-      animation:
-        spin 0.8s linear infinite;
+      animation: spin 0.8s linear infinite;
     }
 
     @keyframes spin {
-
       to {
         transform: rotate(360deg);
       }
-
     }
 
     /* ERROR */
-
     .error {
       display: none;
-
       margin-top: 20px;
-
       padding: 15px;
-
       border-radius: 10px;
-
       background: #fef2f2;
-
       color: #b91c1c;
-
       line-height: 1.5;
     }
 
@@ -208,10 +145,8 @@
     }
 
     /* HASIL */
-
     .result {
       display: none;
-
       margin-top: 25px;
     }
 
@@ -221,82 +156,59 @@
 
     .status-box {
       text-align: center;
-
       padding: 22px;
-
       border-radius: 14px;
-
       background: #eff6ff;
-
       margin-bottom: 20px;
     }
 
     .status-label {
       font-size: 13px;
-
       color: #6b7280;
-
       margin-bottom: 10px;
-
       font-weight: 600;
     }
 
     .status {
       display: inline-block;
-
       padding: 9px 18px;
-
       border-radius: 999px;
-
       font-weight: bold;
-
       font-size: 15px;
     }
 
     .status.waiting {
       background: #fef3c7;
-
       color: #92400e;
     }
 
     .status.success {
       background: #dcfce7;
-
       color: #166534;
     }
 
     .status.warning {
       background: #fee2e2;
-
       color: #991b1b;
     }
 
     .status.info {
       background: #dbeafe;
-
       color: #1e40af;
     }
 
     .info {
-      border:
-        1px solid #e5e7eb;
-
+      border: 1px solid #e5e7eb;
       border-radius: 12px;
-
       overflow: hidden;
     }
 
     .row {
       display: flex;
-
       justify-content: space-between;
-
       gap: 20px;
-
       padding: 13px 15px;
-
-      border-bottom:
-        1px solid #f1f5f9;
+      border-bottom: 1px solid #f1f5f9;
     }
 
     .row:last-child {
@@ -309,7 +221,6 @@
 
     .row strong {
       text-align: right;
-
       word-break: break-word;
     }
 
@@ -322,7 +233,6 @@
     }
 
     @media (max-width: 600px) {
-
       body {
         padding: 10px;
       }
@@ -341,59 +251,32 @@
 
       .row {
         flex-direction: column;
-
         gap: 5px;
       }
 
       .row strong {
         text-align: left;
       }
-
     }
-
   </style>
-
 </head>
-
 
 <body>
 
-
 <div class="container">
-
   <div class="card">
 
-
     <!-- HEADER -->
-
     <div class="header">
-
-      <small>
-        Layanan Bebas Temuan
-      </small>
-
-      <h2>
-        Cek Status Permohonan
-      </h2>
-
-      <p>
-        Masukkan nomor permohonan untuk
-        mengetahui status pengajuan SKBT Anda.
-      </p>
-
+      <small>Layanan Bebas Temuan</small>
+      <h2>Cek Status Permohonan</h2>
+      <p>Masukkan nomor permohonan untuk mengetahui status pengajuan SKBT Anda.</p>
     </div>
 
-
     <!-- FORM -->
-
     <form id="statusForm">
-
       <div class="form-group">
-
-        <label for="nomor">
-          Nomor Permohonan
-        </label>
-
+        <label for="nomor">Nomor Permohonan</label>
         <input
           type="text"
           id="nomor"
@@ -401,244 +284,98 @@
           autocomplete="off"
           required
         >
-
       </div>
 
-
-      <button
-        type="submit"
-        id="cekButton"
-      >
-
+      <button type="submit" id="cekButton">
         🔍 Cek Status
-
       </button>
-
     </form>
 
-
     <!-- LOADING -->
-
-    <div
-      id="loading"
-      class="loading"
-    >
-
+    <div id="loading" class="loading">
       <div class="spinner"></div>
-
-      <div>
-        Sedang memeriksa status...
-      </div>
-
+      <div>Sedang memeriksa status...</div>
     </div>
-
 
     <!-- ERROR -->
-
-    <div
-      id="error"
-      class="error"
-    ></div>
-
+    <div id="error" class="error"></div>
 
     <!-- HASIL -->
-
-    <div
-      id="result"
-      class="result"
-    >
-
+    <div id="result" class="result">
 
       <!-- STATUS -->
-
       <div class="status-box">
-
-        <div class="status-label">
-          STATUS PERMOHONAN
-        </div>
-
-        <div
-          id="status"
-          class="status"
-        ></div>
-
+        <div class="status-label">STATUS PERMOHONAN</div>
+        <div id="status" class="status"></div>
       </div>
-
 
       <!-- DATA -->
-
       <div class="info">
-
+        <div class="row">
+          <span>Nomor Permohonan</span>
+          <strong id="rNomor">-</strong>
+        </div>
 
         <div class="row">
-
-          <span>
-            Nomor Permohonan
-          </span>
-
-          <strong id="rNomor">
-            -
-          </strong>
-
+          <span>Nama Sesuai SK</span>
+          <strong id="rNama">-</strong>
         </div>
-
 
         <div class="row">
-
-          <span>
-            Nama Sesuai SK
-          </span>
-
-          <strong id="rNama">
-            -
-          </strong>
-
+          <span>NIP</span>
+          <strong id="rNip">-</strong>
         </div>
-
 
         <div class="row">
-
-          <span>
-            NIP
-          </span>
-
-          <strong id="rNip">
-            -
-          </strong>
-
+          <span>Keperluan</span>
+          <strong id="rKeperluan">-</strong>
         </div>
-
 
         <div class="row">
-
-          <span>
-            Keperluan
-          </span>
-
-          <strong id="rKeperluan">
-            -
-          </strong>
-
+          <span>Pangkat/Golongan</span>
+          <strong id="rPangkat">-</strong>
         </div>
-
 
         <div class="row">
-
-          <span>
-            Pangkat/Golongan
-          </span>
-
-          <strong id="rPangkat">
-            -
-          </strong>
-
+          <span>Jabatan</span>
+          <strong id="rJabatan">-</strong>
         </div>
-
 
         <div class="row">
-
-          <span>
-            Jabatan
-          </span>
-
-          <strong id="rJabatan">
-            -
-          </strong>
-
+          <span>Instansi</span>
+          <strong id="rInstansi">-</strong>
         </div>
-
 
         <div class="row">
-
-          <span>
-            Instansi
-          </span>
-
-          <strong id="rInstansi">
-            -
-          </strong>
-
+          <span>Unit Kerja</span>
+          <strong id="rUnit">-</strong>
         </div>
-
 
         <div class="row">
-
-          <span>
-            Unit Kerja
-          </span>
-
-          <strong id="rUnit">
-            -
-          </strong>
-
+          <span>Tanggal Pengajuan</span>
+          <strong id="rTanggal">-</strong>
         </div>
-
 
         <div class="row">
-
-          <span>
-            Tanggal Pengajuan
-          </span>
-
-          <strong id="rTanggal">
-            -
-          </strong>
-
+          <span>Tanggal Pemeriksaan</span>
+          <strong id="rTanggalPemeriksaan">-</strong>
         </div>
 
-
-        <div class="row">
-
-          <span>
-            Tanggal Pemeriksaan
-          </span>
-
-          <strong id="rTanggalPemeriksaan">
-            -
-          </strong>
-
+        <div class="row" id="petugasRow">
+          <span>Petugas</span>
+          <strong id="rPetugas">-</strong>
         </div>
-
-
-        <div
-          class="row"
-          id="petugasRow"
-        >
-
-          <span>
-            Petugas
-          </span>
-
-          <strong id="rPetugas">
-            -
-          </strong>
-
-        </div>
-
-
       </div>
 
-
       <!-- CEK LAGI -->
-
-      <button
-        type="button"
-        class="reset"
-        onclick="resetForm()"
-      >
-
+      <button type="button" class="reset" onclick="resetForm()">
         ↻ Cek Nomor Lain
-
       </button>
-
 
     </div>
 
-
   </div>
-
 </div>
-
 
 <script>
 /* =========================================================
@@ -663,6 +400,48 @@ form.addEventListener("submit", function (event) {
   }
   cekStatus(nomor);
 });
+
+/* =========================================================
+   FUNGSI MASKING NIP
+   ========================================================= */
+function maskNIP(nip) {
+  if (!nip || nip === "-") return "-";
+  
+  const strNIP = String(nip).trim();
+  
+  // Jika panjang NIP minimal 8 digit, samarkan bagian tengahnya
+  if (strNIP.length >= 8) {
+    const prefix = strNIP.slice(0, 4);
+    const suffix = strNIP.slice(-4);
+    const maskedLength = strNIP.length - 8;
+    return prefix + "*".repeat(maskedLength) + suffix;
+  }
+  
+  return strNIP;
+}
+
+/* =========================================================
+   FUNGSI MASKING NAMA
+   ========================================================= */
+function maskNama(nama) {
+  if (!nama || nama === "-") return "-";
+  
+  const strNama = String(nama).trim();
+  const kataArray = strNama.split(/\s+/);
+  
+  const maskedWords = kataArray.map(kata => {
+    if (kata.length <= 1) {
+      return "*";
+    }
+    if (kata.length === 2) {
+      return kata[0] + "*";
+    }
+    // Mengambil huruf pertama, sisanya diganti bintang
+    return kata[0] + "*".repeat(kata.length - 1);
+  });
+  
+  return maskedWords.join(" ");
+}
 
 /* =========================================================
    CEK STATUS - JSONP, sehingga tidak terkena CORS fetch
@@ -739,8 +518,11 @@ function tampilkanHasil(data) {
   result.classList.add("show");
 
   document.getElementById("rNomor").textContent = data.nomor || "-";
-  document.getElementById("rNama").textContent = data.nama || "-";
-  document.getElementById("rNip").textContent = data.nip || "-";
+  
+  // Menggunakan masking Nama dan NIP
+  document.getElementById("rNama").textContent = maskNama(data.nama);
+  document.getElementById("rNip").textContent = maskNIP(data.nip);
+  
   document.getElementById("rKeperluan").textContent = data.keperluan || "-";
   document.getElementById("rPangkat").textContent = data.pangkat || "-";
   document.getElementById("rJabatan").textContent = data.jabatan || "-";
@@ -789,7 +571,6 @@ function resetForm() {
   nomorInput.focus();
 }
 </script>
-
 
 </body>
 
