@@ -1619,13 +1619,13 @@ function handleSubmissionResponse(
 
 
   if (success) {
-
+   if (form) {
+    form.style.display = "none";
+  }
     success.classList.add(
       "show"
     );
-   window.scrollTo({
-    top: 0,
-    behavior: "smooth" // Efek pergeseran layar yang halus
+   window.scrollTo(0, 0);
   });
   }
 
