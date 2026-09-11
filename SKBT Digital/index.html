@@ -189,16 +189,20 @@
     </section>
 
   </form>
-
-  <section id="success" class="success-box">
-    <div class="ok">✓</div>
+<div id="success" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-icon">✓</div>
     <h2>Permohonan Berhasil Dikirim</h2>
-    <p>Nomor permohonan Anda:</p>
-    <strong id="number"></strong>
-    <p>Simpan nomor ini untuk pengecekan status permohonan.</p>
-	  <br>
+    <p>Nomor Permohonan Anda:</p>
+    <div class="modal-number" id="number">-</div>
+    <button type="button" id="closeModalBtn" onclick="closeSuccessModal()">
+      Tutup
+    </button>
+  </div>
 	<a href="https://habibhanafi.github.io/SKBT-Digital/SKBT%20Digital/menu_skbt.html">Kembali Ke Halaman Utama</a>
-  </section>
+</div>
+	
+ 
 </main>
 
 <script src="script.js"></script>
