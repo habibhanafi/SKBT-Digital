@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
+
 <meta charset="UTF-8">
 
 <meta
@@ -8,11 +10,16 @@
     content="width=device-width, initial-scale=1.0, viewport-fit=cover"
 >
 
-<link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+>
+
 <title>Asisten SKBT Digital</title>
+
+
 <style>
+
 /* =========================================================
    RESET
    ========================================================= */
@@ -23,8 +30,11 @@
 
 html,
 body {
+
     width: 100%;
+
     margin: 0;
+
     padding: 0;
 
     font-family: Arial, sans-serif;
@@ -47,8 +57,7 @@ body {
     /*
      * Tidak menggunakan 100dvh.
      *
-     * Karena chatbot berada di iframe 1500px,
-     * 100dvh akan mengikuti tinggi iframe.
+     * Chatbot berada di dalam iframe.
      */
 
     height: clamp(
@@ -316,6 +325,11 @@ body {
     font-size: 12px;
 
     cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        opacity 0.2s ease;
 }
 
 
@@ -326,6 +340,26 @@ body {
     color: #ffffff;
 
     border-color: #00a9c7;
+}
+
+
+/*
+ * PENTING:
+ * Tombol quick question dinonaktifkan
+ * saat request sedang berjalan.
+ */
+
+.quick-btn:disabled {
+
+    cursor: not-allowed;
+
+    opacity: 0.45;
+
+    background: #f2f5f8;
+
+    color: #8a9aaa;
+
+    border-color: #d5dde5;
 }
 
 
@@ -432,6 +466,10 @@ body {
 
     cursor:
         pointer;
+
+    transition:
+        background 0.2s ease,
+        opacity 0.2s ease;
 }
 
 
@@ -442,6 +480,19 @@ body {
 }
 
 
+.send-btn:disabled {
+
+    cursor:
+        not-allowed;
+
+    opacity:
+        0.55;
+
+    background:
+        #7fa6cc;
+}
+
+
 /* =========================================================
    TABLET
    ========================================================= */
@@ -449,11 +500,6 @@ body {
 @media (max-width: 768px) {
 
     .chat-container {
-
-        /*
-         * Berdasarkan lebar,
-         * bukan tinggi iframe.
-         */
 
         height:
             clamp(
@@ -550,14 +596,6 @@ body {
 
 
     .chat-container {
-
-        /*
-         * PENTING:
-         *
-         * Jangan gunakan 100dvh.
-         *
-         * Karena iframe Anda 1500px.
-         */
 
         width:
             100%;
@@ -708,6 +746,7 @@ body {
     }
 
 }
+
 </style>
 
 </head>
@@ -721,7 +760,7 @@ body {
      ======================================================= -->
 
 <div class="chat-container">
-<div id="top">
+
 
     <!-- ===================================================
          HEADER
@@ -730,23 +769,30 @@ body {
     <div class="chat-header">
 
         <div class="logo">
-        <i class="fa-solid fa-message"></i>
+
+            <i class="fa-solid fa-message"></i>
+
         </div>
+
 
         <div>
 
             <div class="header-title">
+
                 Asisten AI Interaktif
+
             </div>
 
+
             <div class="header-subtitle">
+
                 Layanan Surat Keterangan Bebas Temuan
+
             </div>
 
         </div>
 
     </div>
-</div>
 
 
     <!-- ===================================================
@@ -760,9 +806,16 @@ body {
 
         <div class="message bot">
 
-            <div class="bubble"> Halo 👋 Saya adalah <b>Asisten AI Interaktif</b>.
-Saya dapat menjawab pertanyaan anda mengenai 
-layanan Surat Keterangan Bebas Temuan (SKBT) secara otomatis.</div>
+            <div class="bubble">
+
+                Halo 👋 Saya adalah
+                <b>Asisten AI Interaktif</b>.
+
+                Saya dapat menjawab pertanyaan anda mengenai
+                layanan Surat Keterangan Bebas Temuan (SKBT)
+                secara otomatis.
+
+            </div>
 
         </div>
 
@@ -775,12 +828,15 @@ layanan Surat Keterangan Bebas Temuan (SKBT) secara otomatis.</div>
 
     <div class="quick-questions">
 
+
         <button
             type="button"
             class="quick-btn"
             onclick="quickQuestion('Apa saja persyaratan SKBT?')"
         >
+
             📋 Persyaratan
+
         </button>
 
 
@@ -789,8 +845,11 @@ layanan Surat Keterangan Bebas Temuan (SKBT) secara otomatis.</div>
             class="quick-btn"
             onclick="quickQuestion('Bagaimana alur pengajuan SKBT?')"
         >
+
             ℹ️ Alur Pengajuan
+
         </button>
+
 
     </div>
 
@@ -803,7 +862,9 @@ layanan Surat Keterangan Bebas Temuan (SKBT) secara otomatis.</div>
         id="typing"
         class="typing"
     >
+
         Asisten sedang mengetik...
+
     </div>
 
 
@@ -833,7 +894,9 @@ layanan Surat Keterangan Bebas Temuan (SKBT) secara otomatis.</div>
             title="Kirim"
             aria-label="Kirim pesan"
         >
+
             ➤
+
         </button>
 
     </form>
@@ -845,19 +908,28 @@ layanan Surat Keterangan Bebas Temuan (SKBT) secara otomatis.</div>
 
 <script>
 
-/* =========================================================
-   URL CLOUDFLARE WORKER
-   ========================================================= */
-// Matikan fitur penyesuaian scroll bawaan browser
-if ('scrollRestoration' in history) {
-  history.scrollRestoration = 'manual';
-}
 
-// Paksa scroll ke posisi paling atas (x: 0, y: 0) saat halaman dibuka
-window.scrollTo(0, 0);
-    
+/* =========================================================
+   CLOUDFLARE WORKER
+   ========================================================= */
+
 const WORKER_URL =
     "https://quiet-bush-fe39.muhammadhabib348.workers.dev/";
+
+
+
+/* =========================================================
+   SCROLL RESTORATION
+   ========================================================= */
+
+if ('scrollRestoration' in history) {
+
+    history.scrollRestoration = 'manual';
+
+}
+
+window.scrollTo(0, 0);
+
 
 
 /* =========================================================
@@ -865,29 +937,28 @@ const WORKER_URL =
    ========================================================= */
 
 const chatForm =
-    document.getElementById(
-        "chatForm"
-    );
+    document.getElementById("chatForm");
+
 
 const chatInput =
-    document.getElementById(
-        "chatInput"
-    );
+    document.getElementById("chatInput");
+
 
 const sendButton =
-    document.getElementById(
-        "sendButton"
-    );
+    document.getElementById("sendButton");
+
 
 const chatMessages =
-    document.getElementById(
-        "chatMessages"
-    );
+    document.getElementById("chatMessages");
+
 
 const typing =
-    document.getElementById(
-        "typing"
-    );
+    document.getElementById("typing");
+
+
+const quickButtons =
+    document.querySelectorAll(".quick-btn");
+
 
 
 /* =========================================================
@@ -897,28 +968,80 @@ const typing =
 let chatHistory = [];
 
 
+/*
+ * PENTING
+ *
+ * Hanya satu request boleh berjalan
+ * pada satu waktu.
+ */
+
+let isSending = false;
+
+
+
+/* =========================================================
+   SET CHAT BUSY
+   ========================================================= */
+
+function setChatBusy(busy) {
+
+    isSending = busy;
+
+
+    sendButton.disabled =
+        busy;
+
+
+    chatInput.disabled =
+        busy;
+
+
+    quickButtons.forEach(
+        function(button) {
+
+            button.disabled =
+                busy;
+
+        }
+    );
+
+
+    typing.style.display =
+        busy
+            ? "block"
+            : "none";
+
+}
+
+
+
 /* =========================================================
    TAMBAH PESAN
    ========================================================= */
 
 function addMessage(text, sender) {
 
+
     const message =
         document.createElement("div");
+
 
     message.className =
         "message " + sender;
 
 
+
     const bubble =
         document.createElement("div");
+
 
     bubble.className =
         "bubble";
 
 
+
     /*
-     * Mendeteksi Markdown link:
+     * Mendukung Markdown link:
      *
      * [Nama Link](https://alamat.com)
      */
@@ -927,14 +1050,17 @@ function addMessage(text, sender) {
         /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
 
 
+
     let lastIndex = 0;
 
     let match;
 
 
+
     while (
         (match = linkRegex.exec(text)) !== null
     ) {
+
 
         /*
          * Teks sebelum link
@@ -958,8 +1084,9 @@ function addMessage(text, sender) {
         }
 
 
+
         /*
-         * Buat elemen link
+         * Buat link secara aman
          */
 
         const link =
@@ -991,11 +1118,13 @@ function addMessage(text, sender) {
         );
 
 
+
         lastIndex =
             match.index +
             match[0].length;
 
     }
+
 
 
     /*
@@ -1019,6 +1148,7 @@ function addMessage(text, sender) {
     }
 
 
+
     message.appendChild(
         bubble
     );
@@ -1028,6 +1158,11 @@ function addMessage(text, sender) {
         message
     );
 
+
+
+    /*
+     * Scroll ke pesan terbaru
+     */
 
     setTimeout(
         function() {
@@ -1042,20 +1177,34 @@ function addMessage(text, sender) {
 }
 
 
+
 /* =========================================================
    QUICK QUESTION
    ========================================================= */
 
-function quickQuestion(
-    question
-) {
+function quickQuestion(question) {
+
+
+    /*
+     * Jangan lakukan apa pun
+     * jika request sebelumnya masih berjalan.
+     */
+
+    if (isSending) {
+
+        return;
+
+    }
+
 
     chatInput.value =
         question;
 
+
     sendMessage();
 
 }
+
 
 
 /* =========================================================
@@ -1074,14 +1223,35 @@ chatForm.addEventListener(
 );
 
 
+
 /* =========================================================
    SEND MESSAGE
    ========================================================= */
 
 async function sendMessage() {
 
+
+    /*
+     * =====================================================
+     * PENGAMAN UTAMA
+     *
+     * Mencegah double click,
+     * double Enter,
+     * dan request paralel.
+     * =====================================================
+     */
+
+    if (isSending) {
+
+        return;
+
+    }
+
+
+
     const message =
         chatInput.value.trim();
+
 
 
     /*
@@ -1097,6 +1267,16 @@ async function sendMessage() {
     }
 
 
+
+    /*
+     * Aktifkan status busy SEBELUM
+     * melakukan request.
+     */
+
+    setChatBusy(true);
+
+
+
     /*
      * Tampilkan pesan pengguna.
      */
@@ -1107,6 +1287,7 @@ async function sendMessage() {
     );
 
 
+
     /*
      * Kosongkan input.
      */
@@ -1114,27 +1295,15 @@ async function sendMessage() {
     chatInput.value = "";
 
 
-    /*
-     * Disable sementara.
-     */
-
-    sendButton.disabled =
-        true;
-
-    chatInput.disabled =
-        true;
-
-
-    typing.style.display =
-        "block";
-
 
     try {
+
 
         console.log(
             "Mengirim pertanyaan:",
             message
         );
+
 
 
         /* =================================================
@@ -1145,13 +1314,14 @@ async function sendMessage() {
             await fetch(
                 WORKER_URL,
                 {
-
                     method:
                         "POST",
 
                     headers: {
+
                         "Content-Type":
                             "application/json"
+
                     },
 
                     body:
@@ -1169,10 +1339,12 @@ async function sendMessage() {
             );
 
 
+
         console.log(
             "HTTP STATUS:",
             response.status
         );
+
 
 
         /* =================================================
@@ -1181,12 +1353,14 @@ async function sendMessage() {
 
         let data;
 
+
         try {
 
             data =
                 await response.json();
 
         }
+
         catch (error) {
 
             throw new Error(
@@ -1196,10 +1370,12 @@ async function sendMessage() {
         }
 
 
+
         console.log(
             "RESPONSE WORKER:",
             data
         );
+
 
 
         /* =================================================
@@ -1211,13 +1387,15 @@ async function sendMessage() {
             !data.success
         ) {
 
+
             let errorMessage =
                 data.error ||
                 "Gagal mendapatkan jawaban dari server.";
 
 
+
             /*
-             * Rate limit
+             * Rate limit 429
              */
 
             if (
@@ -1225,13 +1403,15 @@ async function sendMessage() {
             ) {
 
                 errorMessage =
-                    "Layanan sedang sibuk karena batas penggunaan tercapai. Silakan coba lagi beberapa saat.";
+                    "Layanan sedang sibuk karena batas penggunaan tercapai. Silakan tunggu beberapa saat sebelum mencoba lagi.";
 
             }
 
 
+
             /*
-             * API error
+             * Detail error hanya ditampilkan
+             * pada console browser.
              */
 
             if (
@@ -1247,11 +1427,13 @@ async function sendMessage() {
             }
 
 
+
             throw new Error(
                 errorMessage
             );
 
         }
+
 
 
         /* =================================================
@@ -1262,15 +1444,15 @@ async function sendMessage() {
             data.answer;
 
 
-        if (
-            !answer
-        ) {
+
+        if (!answer) {
 
             throw new Error(
                 "Jawaban dari AI kosong."
             );
 
         }
+
 
 
         /* =================================================
@@ -1281,6 +1463,7 @@ async function sendMessage() {
             answer,
             "bot"
         );
+
 
 
         /* =================================================
@@ -1298,6 +1481,7 @@ async function sendMessage() {
         });
 
 
+
         chatHistory.push({
 
             role:
@@ -1309,30 +1493,43 @@ async function sendMessage() {
         });
 
 
+
         /*
-         * Batasi history menjadi
-         * 10 pesan terakhir.
+         * Batasi history.
+         *
+         * 12 pesan = sekitar 6 percakapan.
+         *
+         * Ini dibuat agar request tidak terlalu besar
+         * dan membantu mengurangi penggunaan token.
          */
 
         if (
-            chatHistory.length > 10
+            chatHistory.length > 12
         ) {
 
             chatHistory =
-                chatHistory.slice(-10);
+                chatHistory.slice(-12);
 
         }
 
+
+
     }
 
-
     catch (error) {
+
 
         console.error(
             "CHATBOT ERROR:",
             error
         );
 
+
+
+        /*
+         * Tampilkan pesan error
+         * kepada pengguna.
+         */
 
         addMessage(
 
@@ -1347,20 +1544,20 @@ async function sendMessage() {
     }
 
 
+
     finally {
 
-        typing.style.display =
-            "none";
 
+        /*
+         * Aktifkan kembali semua kontrol.
+         */
 
-        sendButton.disabled =
-            false;
+        setChatBusy(false);
 
-        chatInput.disabled =
-            false;
 
 
         chatInput.focus();
+
 
 
         /*
@@ -1382,6 +1579,7 @@ async function sendMessage() {
 }
 
 
+
 /* =========================================================
    ENTER UNTUK MENGIRIM
    ========================================================= */
@@ -1390,11 +1588,19 @@ chatInput.addEventListener(
     "keydown",
     function(event) {
 
+
         if (
             event.key === "Enter"
         ) {
 
+
             event.preventDefault();
+
+
+            /*
+             * sendMessage() sudah memiliki
+             * pengaman isSending.
+             */
 
             sendMessage();
 
@@ -1402,6 +1608,7 @@ chatInput.addEventListener(
 
     }
 );
+
 
 
 /* =========================================================
@@ -1412,14 +1619,20 @@ if (
     window.visualViewport
 ) {
 
+
     function updateViewport() {
 
         document.documentElement.style.setProperty(
+
             "--viewport-height",
-            window.visualViewport.height + "px"
+
+            window.visualViewport.height +
+            "px"
+
         );
 
     }
+
 
 
     window.visualViewport.addEventListener(
@@ -1432,8 +1645,10 @@ if (
 
 }
 
+
 </script>
 
 
 </body>
+
 </html>
