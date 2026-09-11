@@ -1626,7 +1626,6 @@ function handleSubmissionResponse(
       "show"
     );
    window.scrollTo(0, 0);
-  });
   }
 
 
