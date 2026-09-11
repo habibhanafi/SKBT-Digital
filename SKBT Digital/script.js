@@ -1623,7 +1623,10 @@ function handleSubmissionResponse(
     success.classList.add(
       "show"
     );
-
+   window.scrollTo({
+    top: 0,
+    behavior: "smooth" // Efek pergeseran layar yang halus
+  });
   }
 
 
