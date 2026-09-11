@@ -1622,10 +1622,8 @@ function handleSubmissionResponse(
    if (form) {
     form.style.display = "none";
   }
-    success.classList.add(
-      "show"
-    );
-   window.scrollTo(0, 0);
+    success.classList.add("show");
+     notifyParentScrollTop();
   }
 
 
@@ -2424,3 +2422,11 @@ const dataSKPD = {
 
             selectElement.appendChild(optgroup);
         }
+function closeSuccessModal() {
+  const success = document.getElementById("success");
+  if (success) {
+    success.classList.remove("show");
+  }
+  // contoh: reload halaman biar form bersih untuk permohonan baru
+  // location.reload();
+}
