@@ -2282,6 +2282,11 @@ document.addEventListener(
 
   }
 );
+
+document.addEventListener(
+  "DOMContentLoaded",
+  function() {
+
 const dataSKPD = {
             "Sekretariat & Inspektorat": [
                 "Sekretariat Daerah (SETDAKAB)",
@@ -2354,16 +2359,31 @@ const dataSKPD = {
 
         const selectElement = document.getElementById('skpd');
 
-        for (const [kategori, daftar] of Object.entries(dataSKPD)) {
-            const optgroup = document.createElement('optgroup');
-            optgroup.label = kategori;
+        if (!selectElement) {
 
-            daftar.forEach(item => {
-                const option = document.createElement('option');
-                option.value = item;
-                option.textContent = item;
-                optgroup.appendChild(option);
-            });
+            console.error(
+                "Elemen <select id=\"skpd\"> tidak ditemukan di halaman. " +
+                "Periksa apakah id di index.html sudah persis 'skpd' " +
+                "dan elemen sudah ada saat script.js dijalankan."
+            );
 
-            selectElement.appendChild(optgroup);
+        } else {
+
+            for (const [kategori, daftar] of Object.entries(dataSKPD)) {
+                const optgroup = document.createElement('optgroup');
+                optgroup.label = kategori;
+
+                daftar.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item;
+                    option.textContent = item;
+                    optgroup.appendChild(option);
+                });
+
+                selectElement.appendChild(optgroup);
+            }
+
         }
+
+  }
+);
