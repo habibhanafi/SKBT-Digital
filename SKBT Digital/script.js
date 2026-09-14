@@ -2357,14 +2357,12 @@ const dataSKPD = {
             ]
         };
 
-        const selectElement = document.getElementById('skpd');
+        const selectElement = document.getElementById('instansi');
 
         if (!selectElement) {
 
             console.error(
-                "Elemen <select id=\"skpd\"> tidak ditemukan di halaman. " +
-                "Periksa apakah id di index.html sudah persis 'skpd' " +
-                "dan elemen sudah ada saat script.js dijalankan."
+                "Elemen <select id=\"instansi\"> (SKPD) tidak ditemukan di halaman."
             );
 
         } else {
