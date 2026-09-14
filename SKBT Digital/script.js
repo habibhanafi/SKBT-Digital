@@ -1,10 +1,10 @@
 /* =========================================================
-   SKBT DIGITAL - SCRIPT.JS FINAL
+   SKBT DIGITAL - JAVASCRIPT FINAL
    ========================================================= */
 
 
 /* =========================================================
-   GOOGLE APPS SCRIPT
+   URL GOOGLE APPS SCRIPT
    ========================================================= */
 
 const GOOGLE_SCRIPT_URL =
@@ -12,7 +12,7 @@ const GOOGLE_SCRIPT_URL =
 
 
 /* =========================================================
-   VARIABEL GLOBAL
+   VARIABEL
    ========================================================= */
 
 let step = 1;
@@ -20,16 +20,6 @@ let step = 1;
 let death = false;
 
 let isSubmitting = false;
-
-let currentTransactionId = "";
-
-let pollingTimer = null;
-
-let pollingAttempts = 0;
-
-let responseReceived = false;
-
-
 
 
 /* =========================================================
@@ -82,7 +72,7 @@ const heirs = [
 
 
 /* =========================================================
-   HTML UPLOAD
+   MEMBUAT FORM UPLOAD
    ========================================================= */
 
 function uploadHTML(items) {
@@ -94,7 +84,7 @@ function uploadHTML(items) {
       <div class="upload">
 
         <label>
-          ${escapeHTML(item[0])} *
+          ${item[0]} *
         </label>
 
         <div class="drop">
@@ -234,8 +224,8 @@ document.addEventListener(
   function(event) {
 
     if (
-      !event.target ||
-      event.target.type !== "file"
+      event.target.type !==
+      "file"
     ) {
 
       return;
@@ -246,9 +236,7 @@ document.addEventListener(
     const input =
       event.target;
 
-
     const file =
-      input.files &&
       input.files[0];
 
 
@@ -266,7 +254,7 @@ document.addEventListener(
 
 
     /* -----------------------------------------------------
-       MAKSIMAL 5 MB
+       MAKSIMUM 5 MB
        ----------------------------------------------------- */
 
     if (
@@ -279,8 +267,7 @@ document.addEventListener(
       );
 
 
-      input.value =
-        "";
+      input.value = "";
 
 
       if (output) {
@@ -322,8 +309,7 @@ document.addEventListener(
       );
 
 
-      input.value =
-        "";
+      input.value = "";
 
 
       if (output) {
@@ -521,11 +507,15 @@ function show() {
 
 
   const l1 =
-    document.getElementById("l1");
+    document.getElementById(
+      "l1"
+    );
 
 
   const l2 =
-    document.getElementById("l2");
+    document.getElementById(
+      "l2"
+    );
 
 
   if (l1) {
@@ -567,7 +557,7 @@ function show() {
 
 
 /* =========================================================
-   AMBIL NILAI FORM
+   MENGAMBIL NILAI
    ========================================================= */
 
 function val(id) {
@@ -648,6 +638,7 @@ function review() {
   if (reviewBox) {
 
     reviewBox.innerHTML =
+
       data.map(
         function(item) {
 
@@ -690,6 +681,7 @@ function review() {
   if (reviewDocs) {
 
     reviewDocs.innerHTML =
+
       allDocuments.map(
         function(item) {
 
@@ -711,9 +703,7 @@ function review() {
 
             <li>
 
-              ✓ ${escapeHTML(
-                item[0]
-              )}:
+              ✓ ${item[0]}:
 
               ${
                 file
@@ -736,7 +726,7 @@ function review() {
 
 
 /* =========================================================
-   FILE → BASE64
+   FILE -> BASE64
    ========================================================= */
 
 function fileToBase64(file) {
@@ -759,9 +749,7 @@ function fileToBase64(file) {
             result.split(",")[1];
 
 
-          resolve(
-            base64
-          );
+          resolve(base64);
 
         };
 
@@ -769,9 +757,7 @@ function fileToBase64(file) {
       reader.onerror =
         function(error) {
 
-          reject(
-            error
-          );
+          reject(error);
 
         };
 
@@ -853,24 +839,250 @@ async function collectFiles() {
 
 
 /* =========================================================
-   GENERATE TRANSACTION ID
+   BUAT TRANSACTION ID DI CLIENT
+
+   Dibuat di sini (bukan menunggu server) supaya kita bisa
+   langsung mulai polling status begitu form dikirim, tanpa
+   menunggu response penuh dari doPost selesai.
    ========================================================= */
 
-function generateTransactionId() {
+function makeTransactionId() {
 
   return (
-
-    "TX-" +
-
+    "SKBT-" +
     Date.now() +
-
     "-" +
-
     Math.random()
       .toString(36)
-      .substring(2, 10)
-
+      .substring(2, 8)
   );
+
+}
+
+
+/* =========================================================
+   POLLING STATUS PERMOHONAN
+
+   Alih-alih menunggu postMessage dari iframe (yang baru
+   dikirim setelah SELURUH proses server selesai: upload
+   dokumen ke Drive + 2 email), kita tanya berkala ke
+   endpoint ?action=status&transactionId=... yang sudah
+   dijawab server begitu nomor permohonan digenerate
+   (jauh lebih cepat daripada menunggu upload/email selesai).
+   ========================================================= */
+
+function checkStatusOnce(transactionId) {
+
+  const url =
+    GOOGLE_SCRIPT_URL +
+    "?action=status&transactionId=" +
+    encodeURIComponent(transactionId);
+
+
+  return fetch(url)
+    .then(function(response) {
+
+      if (!response.ok) {
+
+        throw new Error(
+          "HTTP " + response.status
+        );
+
+      }
+
+      return response.json();
+
+    });
+
+}
+
+
+function pollTransactionStatus(
+  transactionId,
+  options
+) {
+
+  const intervalMs =
+    (options && options.intervalMs) ||
+    1500;
+
+  const timeoutMs =
+    (options && options.timeoutMs) ||
+    45000;
+
+  const startedAt =
+    Date.now();
+
+
+  return new Promise(
+    function(resolve, reject) {
+
+      function tick() {
+
+        checkStatusOnce(transactionId)
+          .then(function(data) {
+
+            if (
+              data &&
+              data.success &&
+              data.found &&
+              data.nomor
+            ) {
+
+              resolve(data);
+
+              return;
+
+            }
+
+            if (
+              Date.now() - startedAt >
+              timeoutMs
+            ) {
+
+              reject(
+                new Error(
+                  "Waktu tunggu nomor permohonan habis."
+                )
+              );
+
+              return;
+
+            }
+
+            setTimeout(
+              tick,
+              intervalMs
+            );
+
+          })
+          .catch(function(error) {
+
+            /*
+             * Kegagalan satu kali polling (misal
+             * masalah jaringan sesaat) tidak langsung
+             * dianggap gagal — coba lagi sampai timeout.
+             * Ini juga menjadi jalur fallback jika
+             * fetch cross-origin diblokir sepenuhnya:
+             * postMessage listener yang sudah ada tetap
+             * berjalan sebagai jalur cadangan.
+             */
+
+            console.warn(
+              "Polling status gagal, mencoba lagi:",
+              error
+            );
+
+            if (
+              Date.now() - startedAt >
+              timeoutMs
+            ) {
+
+              reject(error);
+
+              return;
+
+            }
+
+            setTimeout(
+              tick,
+              intervalMs
+            );
+
+          });
+
+      }
+
+      tick();
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   TAMPILKAN HALAMAN SUKSES
+
+   Dipakai baik oleh hasil polling maupun oleh postMessage,
+   supaya tidak ada logic UI yang terduplikasi.
+   ========================================================= */
+
+function showSuccessPage(nomor) {
+
+  const sending =
+    document.getElementById(
+      "sending"
+    );
+
+  if (sending) {
+
+    sending.classList.remove(
+      "show"
+    );
+
+  }
+
+
+  const number =
+    document.getElementById(
+      "number"
+    );
+
+  if (number) {
+
+    number.textContent =
+      nomor || "-";
+
+  }
+
+
+  const form =
+    document.getElementById(
+      "form"
+    );
+
+  if (form) {
+
+    form.style.display =
+      "none";
+
+  }
+
+
+  const progress =
+    document.querySelector(
+      ".progress"
+    );
+
+  if (progress) {
+
+    progress.style.display =
+      "none";
+
+  }
+
+
+  const success =
+    document.getElementById(
+      "success"
+    );
+
+  if (success) {
+
+    success.classList.add(
+      "show"
+    );
+
+  }
+
+
+  hideSubmitLoading();
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
 
 }
 
@@ -882,7 +1094,10 @@ function generateTransactionId() {
 async function submitToGoogle() {
 
   if (
-    !GOOGLE_SCRIPT_URL
+    !GOOGLE_SCRIPT_URL ||
+    GOOGLE_SCRIPT_URL.includes(
+      "GANTI_DENGAN"
+    )
   ) {
 
     throw new Error(
@@ -906,28 +1121,6 @@ async function submitToGoogle() {
 
 
   /* -------------------------------------------------------
-     BUAT TRANSACTION ID
-     ------------------------------------------------------- */
-
-  currentTransactionId =
-    generateTransactionId();
-
-
-  responseReceived =
-    false;
-
-
-  pollingAttempts =
-    0;
-
-
-  console.log(
-    "[SKBT] Transaction ID:",
-    currentTransactionId
-  );
-
-
-  /* -------------------------------------------------------
      KUMPULKAN FILE
      ------------------------------------------------------- */
 
@@ -939,13 +1132,16 @@ async function submitToGoogle() {
      DATA
      ------------------------------------------------------- */
 
+  const transactionId =
+    makeTransactionId();
+
   const payload = {
 
     action:
       "submit",
 
     transactionId:
-      currentTransactionId,
+      transactionId,
 
     keperluan:
       val("keperluan"),
@@ -1023,25 +1219,25 @@ async function submitToGoogle() {
      FORM POST
      ------------------------------------------------------- */
 
-  const postForm =
+  const form =
     document.createElement(
       "form"
     );
 
 
-  postForm.method =
+  form.method =
     "POST";
 
 
-  postForm.action =
+  form.action =
     GOOGLE_SCRIPT_URL;
 
 
-  postForm.target =
+  form.target =
     "submitFrame";
 
 
-  postForm.style.display =
+  form.style.display =
     "none";
 
 
@@ -1067,7 +1263,7 @@ async function submitToGoogle() {
           payload[key];
 
 
-        postForm.appendChild(
+        form.appendChild(
           input
         );
 
@@ -1076,406 +1272,13 @@ async function submitToGoogle() {
 
 
   document.body.appendChild(
-    postForm
-  );
-
-
-  console.log(
-    "[SKBT] Mengirim data ke Google Apps Script..."
-  );
-
-
-  postForm.submit();
-
-
-  setTimeout(
-    function() {
-
-      if (
-        postForm.parentNode
-      ) {
-
-        postForm.parentNode.removeChild(
-          postForm
-        );
-
-      }
-
-    },
-    2000
+    form
   );
 
 
   /* -------------------------------------------------------
-     MULAI POLLING
+     LOADING
      ------------------------------------------------------- */
-
-  startPolling(
-    currentTransactionId
-  );
-
-}
-
-
-/* =========================================================
-   MULAI POLLING
-   ========================================================= */
-
-function startPolling(
-  transactionId
-) {
-
-  stopPolling();
-
-
-  pollingAttempts =
-    0;
-
-
-  console.log(
-    "[SKBT] Polling dimulai:",
-    transactionId
-  );
-
-
-  checkStatus(
-    transactionId
-  );
-
-}
-
-
-/* =========================================================
-   STOP POLLING
-   ========================================================= */
-
-function stopPolling() {
-
-  if (
-    pollingTimer
-  ) {
-
-    clearTimeout(
-      pollingTimer
-    );
-
-    pollingTimer =
-      null;
-
-  }
-
-}
-
-
-/* =========================================================
-   CEK STATUS / NOMOR
-   ========================================================= */
-
-async function checkStatus(
-  transactionId
-) {
-
-  if (
-    responseReceived
-  ) {
-
-    return;
-
-  }
-
-
-  pollingAttempts++;
-
-
-  console.log(
-    "[SKBT] Cek nomor:",
-    pollingAttempts,
-    "/ 30"
-  );
-
-
-  const url =
-    GOOGLE_SCRIPT_URL +
-    "?action=status" +
-    "&transactionId=" +
-    encodeURIComponent(
-      transactionId
-    ) +
-    "&t=" +
-    Date.now();
-
-
-  try {
-
-    const response =
-      await fetch(
-        url,
-        {
-          method:
-            "GET",
-
-          cache:
-            "no-store"
-        }
-      );
-
-
-    if (
-      response.ok
-    ) {
-
-      const data =
-        await response.json();
-
-
-      console.log(
-        "[SKBT] Status:",
-        data
-      );
-
-
-      /* ---------------------------------------------------
-         NOMOR SUDAH DITEMUKAN
-         --------------------------------------------------- */
-
-      if (
-        data &&
-        data.success === true &&
-        data.found === true &&
-        data.nomor
-      ) {
-
-        responseReceived =
-          true;
-
-
-        stopPolling();
-
-
-        handleSubmissionResponse({
-
-          success:
-            true,
-
-          nomor:
-            data.nomor,
-
-          transactionId:
-            transactionId,
-
-          message:
-            "Permohonan berhasil disimpan."
-
-        });
-
-
-        return;
-
-      }
-
-    }
-
-  }
-
-  catch (error) {
-
-    console.warn(
-      "[SKBT] Error polling:",
-      error
-    );
-
-  }
-
-
-  /* -------------------------------------------------------
-     JIKA BELUM DITEMUKAN
-     ------------------------------------------------------- */
-
-  if (
-    pollingAttempts >= 30
-  ) {
-
-    stopPolling();
-
-
-    hideSubmitLoading();
-
-
-    resetSubmitButton();
-
-
-    isSubmitting =
-      false;
-
-
-    alert(
-
-      "Permohonan sedang diproses, tetapi nomor permohonan belum dapat ditampilkan.\n\n" +
-
-      "JANGAN mengirim ulang permohonan.\n\n" +
-
-      "Silakan gunakan menu Cek Status Permohonan."
-
-    );
-
-
-    return;
-
-  }
-
-
-  /* -------------------------------------------------------
-     CEK LAGI 2 DETIK
-     ------------------------------------------------------- */
-
-  pollingTimer =
-    setTimeout(
-      function() {
-
-        checkStatus(
-          transactionId
-        );
-
-      },
-      2000
-    );
-
-}
-
-
-/* =========================================================
-   POSTMESSAGE
-   ---------------------------------------------------------
-   Tetap dipertahankan sebagai jalur cepat.
-   Polling tetap bekerja jika postMessage tidak berhasil.
-   ========================================================= */
-
-window.addEventListener(
-  "message",
-  function(event) {
-
-    console.log(
-      "[SKBT] Pesan diterima:",
-      event.data
-    );
-
-
-    const message =
-      event.data;
-
-
-    if (
-      !message ||
-      message.type !==
-      "SKBT_RESPONSE"
-    ) {
-
-      return;
-
-    }
-
-
-    const data =
-      message.data;
-
-
-    if (!data) {
-
-      return;
-
-    }
-
-
-    /*
-     * Kalau polling sudah mendapatkan
-     * nomor, jangan tampilkan dua kali.
-     */
-
-    if (
-      responseReceived
-    ) {
-
-      return;
-
-    }
-
-
-    /*
-     * Response berhasil.
-     */
-
-    if (
-      data.success === true &&
-      data.nomor
-    ) {
-
-      responseReceived =
-        true;
-
-
-      stopPolling();
-
-
-      handleSubmissionResponse(
-        data
-      );
-
-
-      return;
-
-    }
-
-
-    /*
-     * Response gagal.
-     */
-
-    if (
-      data.success === false
-    ) {
-
-      responseReceived =
-        true;
-
-
-      stopPolling();
-
-
-      handleSubmissionResponse(
-        data
-      );
-
-    }
-
-  },
-  false
-);
-
-
-/* =========================================================
-   PROSES RESPONSE
-   ========================================================= */
-
-function handleSubmissionResponse(
-  data
-) {
-
-  if (!data) {
-
-    return;
-
-  }
-
-
-  stopPolling();
-
-
-  responseReceived =
-    true;
-
-
-  hideSubmitLoading();
-
 
   const sending =
     document.getElementById(
@@ -1485,7 +1288,7 @@ function handleSubmissionResponse(
 
   if (sending) {
 
-    sending.classList.remove(
+    sending.classList.add(
       "show"
     );
 
@@ -1493,161 +1296,141 @@ function handleSubmissionResponse(
 
 
   /* -------------------------------------------------------
-     GAGAL
+     SUBMIT
      ------------------------------------------------------- */
 
-  if (
-    data.success === false
-  ) {
-
-    resetSubmitButton();
+  form.submit();
 
 
-    isSubmitting =
-      false;
+  /* -------------------------------------------------------
+     MULAI POLLING STATUS
+
+     Tidak perlu menunggu postMessage dari iframe (yang baru
+     datang setelah seluruh upload dokumen + email selesai
+     di server). Begitu server sudah generate nomor
+     permohonan, endpoint status akan langsung menjawabnya.
+
+     Listener "message" (postMessage) yang sudah ada tetap
+     jalan sebagai jalur cadangan — kalau polling gagal total
+     (mis. terblokir jaringan/CORS), tampilan sukses akan
+     tetap muncul begitu iframe selesai memuat.
+     ------------------------------------------------------- */
+
+  pollTransactionStatus(
+    transactionId
+  )
+    .then(function(data) {
+
+      if (submissionResolved) {
+
+        return;
+
+      }
+
+      submissionResolved = true;
 
 
-    alert(
-      data.message ||
-      "Permohonan gagal diproses."
+      showSuccessPage(
+        data.nomor
+      );
+
+    })
+    .catch(function(error) {
+
+      console.warn(
+        "Polling status tidak berhasil, menunggu " +
+        "postMessage dari iframe sebagai cadangan:",
+        error
+      );
+
+    });
+
+}
+
+
+/* =========================================================
+   KUNCI TOMBOL SUBMIT
+   ========================================================= */
+
+function lockSubmitButton() {
+
+  const button =
+    document.getElementById(
+      "submitBtn"
     );
 
+
+  if (!button) {
 
     return;
 
   }
 
 
-  /* -------------------------------------------------------
-     NOMOR
-     ------------------------------------------------------- */
-
-  const number =
-    document.getElementById(
-      "number"
-    );
-
-
-  if (number) {
-
-    number.textContent =
-      data.nomor ||
-      "-";
-
-  }
-
-
-  /* -------------------------------------------------------
-     SIMPAN KE SESSION
-     ------------------------------------------------------- */
-
-  try {
-
-    sessionStorage.setItem(
-      "SKBT_NOMOR",
-      data.nomor ||
-      ""
-    );
-
-
-    if (
-      data.transactionId
-    ) {
-
-      sessionStorage.setItem(
-        "SKBT_TRANSACTION_ID",
-        data.transactionId
-      );
-
-    }
-
-  }
-
-  catch (error) {
-
-    console.warn(
-      "[SKBT] sessionStorage tidak tersedia."
-    );
-
-  }
-
-
-  /* -------------------------------------------------------
-     SEMBUNYIKAN FORM
-     ------------------------------------------------------- */
-
-  const form =
-    document.getElementById(
-      "form"
-    );
-
-
-  if (form) {
-
-    form.style.display =
-      "none";
-
-  }
-
-
-  /* -------------------------------------------------------
-     SEMBUNYIKAN PROGRESS
-     ------------------------------------------------------- */
-
-  const progress =
-    document.querySelector(
-      ".progress"
-    );
-
-
-  if (progress) {
-
-    progress.style.display =
-      "none";
-
-  }
-
-
-  /* -------------------------------------------------------
-     TAMPILKAN SUKSES
-     ------------------------------------------------------- */
-
-  const success =
-    document.getElementById(
-      "success"
-    );
-
-
-  if (success) {
-   if (form) {
-    form.style.display = "none";
-  }
-    success.classList.add(
-      "show"
-    );
-   window.scrollTo(0, 0);
-  }
-
-
-  hideSubmitLoading();
-
-
-  /*
-   * Jangan membuka kembali tombol
-   * setelah berhasil.
-   */
-
-  isSubmitting =
+  button.disabled =
     true;
 
 
-  window.scrollTo({
+  button.style.pointerEvents =
+    "none";
 
-    top: 0,
 
-    behavior: "smooth"
+  button.style.opacity =
+    "0.6";
 
-  });
+
+  button.style.cursor =
+    "not-allowed";
+
+
+  button.innerHTML =
+    "⏳ Mengirim...";
+
+}
+
+
+/* =========================================================
+   BUKA KEMBALI TOMBOL
+   HANYA JIKA ERROR
+   ========================================================= */
+
+function resetSubmitButton() {
+
+  const button =
+    document.getElementById(
+      "submitBtn"
+    );
+
+
+  if (!button) {
+
+    return;
+
+  }
+
+
+  button.disabled =
+    false;
+
+
+  button.style.pointerEvents =
+    "";
+
+
+  button.style.opacity =
+    "";
+
+
+  button.style.cursor =
+    "";
+
+
+  button.innerHTML =
+    "✓ Kirim Permohonan";
+
+
+  isSubmitting =
+    false;
 
 }
 
@@ -1739,108 +1522,127 @@ function hideSubmitLoading() {
 
   }
 
-
-  const sending =
-    document.getElementById(
-      "sending"
-    );
-
-
-  if (sending) {
-
-    sending.classList.remove(
-      "show"
-    );
-
-  }
-
 }
 
 
 /* =========================================================
-   KUNCI TOMBOL
+   RESPONSE DARI GOOGLE APPS SCRIPT
    ========================================================= */
 
-function lockSubmitButton() {
+let submissionResolved = false;
 
-  const button =
-    document.getElementById(
-      "submitBtn"
+
+window.addEventListener(
+  "message",
+  function(event) {
+
+    console.log(
+      "Pesan diterima:",
+      event.data
     );
 
 
-  if (!button) {
-
-    return;
-
-  }
+    const message =
+      event.data;
 
 
-  button.disabled =
-    true;
+    if (
+      !message ||
+      message.type !==
+        "SKBT_RESPONSE"
+    ) {
+
+      return;
+
+    }
 
 
-  button.style.pointerEvents =
-    "none";
+    const data =
+      message.data;
 
 
-  button.style.opacity =
-    "0.6";
+    if (!data) {
+
+      return;
+
+    }
 
 
-  button.style.cursor =
-    "not-allowed";
+    /* -----------------------------------------------------
+       HILANGKAN LOADING
+       ----------------------------------------------------- */
+
+    const sending =
+      document.getElementById(
+        "sending"
+      );
 
 
-  button.innerHTML =
-    "⏳ Mengirim...";
+    if (sending) {
 
-}
+      sending.classList.remove(
+        "show"
+      );
+
+    }
 
 
-/* =========================================================
-   RESET TOMBOL
-   ========================================================= */
+    /* -----------------------------------------------------
+       JIKA GAGAL
+       ----------------------------------------------------- */
 
-function resetSubmitButton() {
+    if (
+      data.success === false
+    ) {
 
-  const button =
-    document.getElementById(
-      "submitBtn"
+      if (submissionResolved) {
+
+        return;
+
+      }
+
+      resetSubmitButton();
+
+      hideSubmitLoading();
+
+
+      alert(
+        data.message ||
+        "Permohonan gagal diproses."
+      );
+
+
+      return;
+
+    }
+
+
+    /* -----------------------------------------------------
+       BERHASIL
+
+       Kalau polling status (?action=status) sudah lebih
+       dulu menampilkan halaman sukses, postMessage ini
+       cukup diabaikan — hanya jalur cadangan.
+       ----------------------------------------------------- */
+
+    if (submissionResolved) {
+
+      return;
+
+    }
+
+    submissionResolved = true;
+
+
+    showSuccessPage(
+      data.nomor
     );
 
+  },
 
-  if (!button) {
+  false
 
-    return;
-
-  }
-
-
-  button.disabled =
-    false;
-
-
-  button.style.pointerEvents =
-    "";
-
-
-  button.style.opacity =
-    "";
-
-
-  button.style.cursor =
-    "";
-
-
-  button.innerHTML =
-    "✓ Kirim Permohonan";
-
-
-  isSubmitting =
-    false;
-
-}
+);
 
 
 /* =========================================================
@@ -1862,25 +1664,24 @@ if (mainForm) {
       event.preventDefault();
 
 
-      /* ---------------------------------------------------
+      /* =================================================
          CEGAH DOUBLE CLICK
-         --------------------------------------------------- */
+         ================================================= */
 
       if (isSubmitting) {
 
         console.log(
-          "[SKBT] Submit diabaikan karena proses sedang berjalan."
+          "Submit diabaikan karena proses sedang berjalan."
         );
-
 
         return;
 
       }
 
 
-      /* ---------------------------------------------------
-         CHECKLIST
-         --------------------------------------------------- */
+      /* =================================================
+         CHECKLIST FINAL
+         ================================================= */
 
       const final =
         document.getElementById(
@@ -1897,15 +1698,14 @@ if (mainForm) {
           "Centang checklist konfirmasi terlebih dahulu."
         );
 
-
         return;
 
       }
 
 
-      /* ---------------------------------------------------
+      /* =================================================
          VALIDASI STEP 1
-         --------------------------------------------------- */
+         ================================================= */
 
       if (!valid(1)) {
 
@@ -1918,9 +1718,9 @@ if (mainForm) {
       }
 
 
-      /* ---------------------------------------------------
+      /* =================================================
          VALIDASI STEP 2
-         --------------------------------------------------- */
+         ================================================= */
 
       if (!valid(2)) {
 
@@ -1933,19 +1733,31 @@ if (mainForm) {
       }
 
 
-      /* ---------------------------------------------------
-         MULAI SUBMIT
-         --------------------------------------------------- */
+      /* =================================================
+         SEMUA VALIDASI BERHASIL
+         ================================================= */
 
       isSubmitting =
         true;
 
 
+      /* =================================================
+         KUNCI TOMBOL SEBELUM PROSES FILE
+         ================================================= */
+
       lockSubmitButton();
 
 
+      /* =================================================
+         TAMPILKAN LOADING
+         ================================================= */
+
       showSubmitLoading();
 
+
+      /* =================================================
+         KIRIM
+         ================================================= */
 
       try {
 
@@ -1956,12 +1768,9 @@ if (mainForm) {
       catch (error) {
 
         console.error(
-          "[SKBT] ERROR SUBMIT:",
+          "ERROR SUBMIT:",
           error
         );
-
-
-        stopPolling();
 
 
         hideSubmitLoading();
@@ -1971,14 +1780,10 @@ if (mainForm) {
 
 
         alert(
-
           error &&
           error.message
-
             ? error.message
-
             : "Terjadi kesalahan saat mengirim permohonan."
-
         );
 
       }
@@ -2023,15 +1828,21 @@ function escapeHTML(value) {
     );
 
 }
-
-
 /* =========================================================
-   DATA DARI CHATBOT
-   ========================================================= */
+   MEMBACA DATA DARI CHATBOT
+========================================================= */
 
 function loadChatbotData() {
 
   try {
+
+    /*
+     * Ambil fragment dari URL
+     *
+     * Contoh:
+     *
+     * #chatdata=%7B%22nama%22...
+     */
 
     const hash =
       window.location.hash;
@@ -2039,9 +1850,7 @@ function loadChatbotData() {
 
     if (
       !hash ||
-      !hash.startsWith(
-        "#chatdata="
-      )
+      !hash.startsWith("#chatdata=")
     ) {
 
       return;
@@ -2049,11 +1858,19 @@ function loadChatbotData() {
     }
 
 
+    /*
+     * Ambil data setelah #chatdata=
+     */
+
     const encoded =
       hash.substring(
         "#chatdata=".length
       );
 
+
+    /*
+     * Decode
+     */
 
     const json =
       decodeURIComponent(
@@ -2061,65 +1878,63 @@ function loadChatbotData() {
       );
 
 
+    /*
+     * Ubah kembali menjadi object
+     */
+
     const data =
-      JSON.parse(
-        json
-      );
+      JSON.parse(json);
 
 
     console.log(
-      "[SKBT] DATA DARI CHATBOT:",
+      "DATA DARI CHATBOT:",
       data
     );
 
+
+    /*
+     * Isi form
+     */
 
     setFieldValue(
       "keperluan",
       data.keperluan
     );
 
-
     setFieldValue(
       "nama",
       data.nama
     );
-
 
     setFieldValue(
       "nip",
       data.nip
     );
 
-
     setFieldValue(
       "pangkat",
       data.pangkat
     );
-
 
     setFieldValue(
       "jabatan",
       data.jabatan
     );
 
-
     setFieldValue(
       "instansi",
       data.instansi
     );
-
 
     setFieldValue(
       "unit",
       data.unit
     );
 
-
     setFieldValue(
       "wa",
       data.wa
     );
-
 
     setFieldValue(
       "email",
@@ -2127,54 +1942,63 @@ function loadChatbotData() {
     );
 
 
-    const keperluanElement =
+    /*
+     * Trigger perubahan keperluan
+     *
+     * Ini penting agar jika:
+     *
+     * Pemberhentian Karena Meninggal Dunia
+     *
+     * maka dokumen ahli waris muncul.
+     */
+
+    const keperluan =
       document.getElementById(
         "keperluan"
       );
 
 
-    if (
-      keperluanElement
-    ) {
+    if (keperluan) {
 
-      keperluanElement.dispatchEvent(
-
+      keperluan.dispatchEvent(
         new Event(
           "change",
           {
-            bubbles: true
+            bubbles:true
           }
         )
-
       );
 
     }
 
 
-    /* -----------------------------------------------------
-       HAPUS DATA DARI URL
-       ----------------------------------------------------- */
+    /*
+     * Hapus data dari URL
+     *
+     * Setelah dibaca, fragment dihilangkan.
+     */
 
     history.replaceState(
-
       null,
-
       "",
-
       window.location.pathname +
       window.location.search
-
     );
 
 
+    /*
+     * Beri informasi kepada pemohon
+     */
+
     showChatbotNotice();
+
 
   }
 
   catch(error) {
 
     console.error(
-      "[SKBT] GAGAL MEMBACA DATA CHATBOT:",
+      "GAGAL MEMBACA DATA CHATBOT:",
       error
     );
 
@@ -2185,26 +2009,23 @@ function loadChatbotData() {
 
 /* =========================================================
    ISI FIELD
-   ========================================================= */
+========================================================= */
 
 function setFieldValue(
   id,
   value
-) {
+){
 
   const element =
-    document.getElementById(
-      id
-    );
+    document.getElementById(id);
 
 
   if (!element) {
 
     console.warn(
-      "[SKBT] Field tidak ditemukan:",
+      "Field tidak ditemukan:",
       id
     );
-
 
     return;
 
@@ -2215,37 +2036,42 @@ function setFieldValue(
     value || "";
 
 
-  element.dispatchEvent(
+  /*
+   * Trigger input/change
+   */
 
+  element.dispatchEvent(
     new Event(
       "input",
       {
-        bubbles: true
+        bubbles:true
       }
     )
-
   );
 
 
   element.dispatchEvent(
-
     new Event(
       "change",
       {
-        bubbles: true
+        bubbles:true
       }
     )
-
   );
 
 }
 
 
 /* =========================================================
-   NOTIFIKASI CHATBOT
-   ========================================================= */
+   NOTIFIKASI DATA CHATBOT
+========================================================= */
 
-function showChatbotNotice() {
+function showChatbotNotice(){
+
+  /*
+   * Jangan membuat elemen jika
+   * sudah ada.
+   */
 
   if (
     document.getElementById(
@@ -2269,41 +2095,28 @@ function showChatbotNotice() {
 
 
   notice.style.cssText = `
-
     background:#e8f5e9;
-
     border:1px solid #81c784;
-
     color:#1b5e20;
-
     padding:14px 16px;
-
     margin:15px 0;
-
     border-radius:10px;
-
     font-size:14px;
-
     line-height:1.5;
-
   `;
 
 
   notice.innerHTML = `
-
-    <strong>
-      🤖 Data dari Asisten SKBT
-    </strong>
-
-    <br>
-
+    <strong>🤖 Data dari Asisten SKBT</strong><br>
     Data pemohon telah diisi otomatis dari percakapan
     dengan Asisten SKBT Digital.
-
     Silakan periksa kembali data sebelum melanjutkan.
-
   `;
 
+
+  /*
+   * Letakkan di awal form
+   */
 
   const form =
     document.getElementById(
@@ -2323,104 +2136,14 @@ function showChatbotNotice() {
 
 
 /* =========================================================
-   DOM READY
-   ========================================================= */
+   JALANKAN SAAT HALAMAN SELESAI DIMUAT
+========================================================= */
 
 document.addEventListener(
   "DOMContentLoaded",
-  function() {
+  function(){
 
     loadChatbotData();
 
   }
 );
-const dataSKPD = {
-            "Sekretariat & Inspektorat": [
-                "Sekretariat Daerah",
-                "Sekretariat Dewan Perwakilan Rakyat",
-                "Inspektorat Daerah"
-            ],
-            "Dinas-Dinas Daerah": [
-                "Dinas Pendidikan dan Kebudayaan",
-                "Dinas Kesehatan",
-                "Dinas Pekerjaan Umum dan Perumahan Rakyat",
-                "Satuan Polisi Pamong Praja dan Wilayatul Hisbah",
-                "Dinas Sosial",
-                "Dinas Perindustrian, Tenaga Kerja, dan Transmigrasi",
-                "Dinas Pemberdayaan Perempuan, Perlindungan Anak, dan Keluarga Berencana",
-                "Dinas Ketahanan Pangan dan Penyuluhan",
-                "Dinas Lingkungan Hidup",
-                "Dinas Kependudukan dan Pencatatan Sipil",
-                "Dinas Pemberdayaan Masyarakat dan Gampong",
-                "Dinas Perhubungan",
-                "Dinas Komunikasi dan Informatika",
-                "Dinas Perdagangan, Koperasi, dan Usaha Kecil Menengah",
-                "Dinas Penanaman Modal dan Pelayanan Perizinan Terpadu",
-                "Dinas Pariwisata, Pemuda, dan Olahraga",
-                "Dinas Perpustakaan dan Kearsipan",
-                "Dinas Perikanan",
-                "Dinas Tanaman Pangan dan Hortikultura",
-                "Dinas Perkebunan dan Peternakan",
-                "Dinas Syariat Islam",
-                "Dinas Pendidikan Dayah",
-                "Dinas Pertanahan"
-            ],
-            "Badan-Badan Daerah": [
-                "Badan Perencanaan Pembangunan Daerah",
-                "Badan Pengelolaan Keuangan dan Pendapatan Daerah",
-                "Badan Kepegawaian dan Pengembangan Sumber Daya Manusia",
-                "Badan Kesatuan Bangsa dan Politik",
-                "Badan Penanggulangan Bencana Daerah"
-            ],
-            "Lembaga Keistimewaan & Sekretariat Khusus": [
-                "Sekretariat Majelis Permusyawaratan Ulama",
-                "Sekretariat Majelis Adat Aceh",
-                "Sekretariat Majelis Pendidikan Aceh",
-                "Sekretariat Baitul Mal"
-            ],
-            "Kecamatan": [
-                "Kecamatan Banda Alam",
-                "Kecamatan Birem Bayeun",
-                "Kecamatan Darul Aman",
-                "Kecamatan Darul Falah",
-                "Kecamatan Darul Ihsan",
-                "Kecamatan Idi Rayeuk",
-                "Kecamatan Idi Timur",
-                "Kecamatan Idi Tunong",
-                "Kecamatan Indra Makmu",
-                "Kecamatan Julok",
-                "Kecamatan Madat",
-                "Kecamatan Nurussalam",
-                "Kecamatan Pante Bidari",
-                "Kecamatan Peudawa",
-                "Kecamatan Peureulak",
-                "Kecamatan Peureulak Barat",
-                "Kecamatan Peureulak Timur",
-                "Kecamatan Ranto Peureulak",
-                "Kecamatan Ranto Selamat",
-                "Kecamatan Serbajadi",
-                "Kecamatan Simpang Jernih",
-                "Kecamatan Simpang Ulim",
-                "Kecamatan Sungai Raya"
-            ],
-          "Rumah Sakit Umum Daerah": [
-               "UPTD RSUD dr. Zubir Mahmud Idi",
-               "UPTD RSUD Sultan Abdul Aziz Syah Peureulak "
-          ]
-        };
-
-        const selectElement = document.getElementById('instansi');
-
-        for (const [kategori, daftar] of Object.entries(dataSKPD)) {
-            const optgroup = document.createElement('optgroup');
-            optgroup.label = kategori;
-
-            daftar.forEach(item => {
-                const option = document.createElement('option');
-                option.value = item;
-                option.textContent = item;
-                optgroup.appendChild(option);
-            });
-
-            selectElement.appendChild(optgroup);
-        }
