@@ -12,6 +12,129 @@ const GOOGLE_SCRIPT_URL =
 
 
 /* =========================================================
+   KOMUNIKASI DENGAN HALAMAN INDUK (CMS)
+
+   Halaman ini (index.html) sering dipasang di dalam <iframe>
+   pada halaman CMS. window.scrollTo() di sini hanya
+   menggulung isi iframe itu sendiri — halaman CMS di luar
+   tidak tahu kontennya berubah. Kalau tinggi iframe di-set
+   tetap oleh CMS, konten baru (misalnya halaman sukses, yang
+   lebih pendek dari form 3-step) bisa terlihat "blank" di
+   bagian bawah, dan scroll-ke-atas tidak terlihat kalau
+   halaman CMS sendiri sedang di-scroll ke bawah.
+
+   Untuk itu kita kirim postMessage ke parent supaya CMS bisa:
+   1. Menyesuaikan tinggi iframe (SKBT_RESIZE)
+   2. Men-scroll halaman CMS ke posisi iframe (SKBT_SCROLL_TO_TOP)
+
+   Kode penerima pesan ini perlu ditambahkan di halaman CMS
+   (di luar iframe) — lihat catatan terpisah untuk kode itu.
+   ========================================================= */
+
+function notifyParentHeight() {
+
+  if (window.parent === window) {
+
+    return;
+
+  }
+
+  try {
+
+    window.parent.postMessage(
+      {
+        type: "SKBT_RESIZE",
+        height: document.documentElement.scrollHeight
+      },
+      "*"
+    );
+
+  }
+  catch (error) {
+
+    console.warn(
+      "Gagal mengirim tinggi ke parent:",
+      error
+    );
+
+  }
+
+}
+
+
+function notifyParentScrollToTop() {
+
+  if (window.parent === window) {
+
+    return;
+
+  }
+
+  try {
+
+    window.parent.postMessage(
+      {
+        type: "SKBT_SCROLL_TO_TOP"
+      },
+      "*"
+    );
+
+  }
+  catch (error) {
+
+    console.warn(
+      "Gagal mengirim perintah scroll ke parent:",
+      error
+    );
+
+  }
+
+}
+
+
+/*
+ * Pantau perubahan tinggi konten secara otomatis
+ * (ganti step, dokumen ahli waris muncul/hilang,
+ * halaman sukses tampil, dll) dan laporkan ke parent
+ * setiap kali berubah.
+ */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  function() {
+
+    notifyParentHeight();
+
+    if (window.ResizeObserver) {
+
+      const resizeObserver =
+        new ResizeObserver(
+          function() {
+
+            notifyParentHeight();
+
+          }
+        );
+
+      resizeObserver.observe(
+        document.body
+      );
+
+    }
+    else {
+
+      window.addEventListener(
+        "load",
+        notifyParentHeight
+      );
+
+    }
+
+  }
+);
+
+
+/* =========================================================
    VARIABEL
    ========================================================= */
 
@@ -1078,6 +1201,18 @@ function showSuccessPage(nomor) {
 
 
   hideSubmitLoading();
+
+  /*
+   * Beri tahu halaman CMS (parent) supaya tinggi iframe
+   * disesuaikan dan halaman CMS ikut scroll ke posisi
+   * iframe. Ini yang membuat halaman sukses benar-benar
+   * terlihat oleh user, bukan cuma ter-scroll di dalam
+   * iframe yang mungkin tidak terlihat.
+   */
+
+  notifyParentHeight();
+
+  notifyParentScrollToTop();
 
   window.scrollTo({
     top: 0,
